@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+<style>
+    .form-control{
+      background-color: black transparent;
+    }
+    .close-button {
+    cursor: pointer;
+    font-weight: bold;
+    position: relative;
+    top: 25px;
+    left: 370px;
+    color: rgb(230, 171, 45);
+    background-color: #111;
+    font-size: 20px;
+  }
+  .form-popup {
+      display: none;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #f1f1f1;
+      border: 3px solid black;
+      z-index: 9999;
+      padding: 20px;
+      max-width: 300px;
+    }
+  
+    /* Full-width input fields */
+    .form-popup input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0 20px 0;
+      border: none;
+      background: #f1f1f1;
+    }
+    .form-popup .btn {
+      background-color: #04aa6d;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    /* Set a style for the close button */
+    .form-popup .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      line-height: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+  
+    /* Change the color of the close button on hover */
+    .form-popup .close:hover {
+      color: black;
+    }
+  </style>
+    
+    <div class="form-popup"   id="dynamicForm" style="display: none; margin-bottom: 30px;">
+  
+ 
+      <span class="close" onclick="closeDiv()">x</span><br>
+      <h1 class="text-dark">Add Option</h1>
+  
+      <label class="text-dark" for="unit"><b>Option</b></label>
+      <input type="text" placeholder="Enter Options" id="newOptionInput"  required>
+      
+      <button  class="btn mt-3"id="submitButton">Add</button>
+     
+    
+  </div>
+    <h3 class="text-center">Edit Details</h3>
+<form action="/payment_edit_view/{{ payment.pk }}" style="width: 90%; margin-top: 40px;" class="text-center" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+            <div class="form-group row">
+                <label  class="col-sm-2 col-form-label">Vendor *</label>
+                <div class="col-sm-10 col-md-7 col-9 ml-5">
+                    <div class="input-group mb-2">
+                      <select name="select" id="vendor-select" class="form-control" value="{{ payment.vendor.first_name }}" re >
+                                    
+                        {% for p in vendor %}
+                        <option name="select"  value="{{ p.id }}" data-email="{{ p.vendor_email }}" data-balance="{{ p.opening_bal }}" selected  >{{ p.first_name }}</option>
+    
+                                  {% endfor %}
+    
+                        </select> 
+                    
+
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+              <label  class="col-sm-2 col-form-label">Email*</label>
+
+            <div class="col-sm-10 col-md-7 col-9">
+              <div class="input-group mb-2">
+                <input type="email" id="email-input" name="email" class="form-control" value="{{ payment.email }}">
+
+
+            </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label  class="col-sm-2 col-form-label">GST Treatment*</label>
+          <div class="col-sm-10 col-md-7 col-9">
+            <div class="input-group mb-2">
+              <input type="text" id="gst" name="gst" class="form-control" value="{{ payment.gst }}">
+          </div>
+          </div>
+        </div>
+            <div class="form-group row">
+                <label for="input2"  class="col-sm-2 col-form-label">Payment Method *</label>
+                <div class="col-sm-10 col-md-7 col-9 ml-5">
+                    <div class="input-group mb-2">
+                      <select id="selectField1"  name="cash" class="form-control">
+                        <option value="{{ payment.cash }}"selected>{{ payment.cash }}</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+
+                      </select>
+                      <button class="addButton" data-target="selectField1" style="background-color: rgb(230, 171, 45); color: #fff;" type="button">+</button>
+                      
+                    
+                          
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label  class="col-sm-2 col-form-label">Reference*</label>
+              <div class="col-sm-10 col-md-7 col-9">
+                <div class="input-group mb-2">
+                  <input type="text" id="reference" class="form-control" name="reference" value="{{ payment.reference }}">
+              </div>
+              </div>
+            </div>
+            
+
+        
+   
+
+  
+    <div class="form-group row">
+        <label  class="col-sm-2 col-form-label">Payment Date*</label>
+        <div class="col-sm-10 col-md-7 col-9 ml-5">
+          <div class="input-group mb-2">
+            <input type="date" id="date" name="date" class="form-control" value="{{ payment.date|date:'Y-m-d' }}">
+      </div>
+    </div>
+    </div>
+    <div class="form-group row">
+        <label  class="col-lg-2 col-form-label">Paid Through*</label>
+        <div class="col-sm-10 col-md-7 col-9 ml-5">
+         <div class="input-group mb-2">
+          <select id="selectField2" name="payment" class="form-control">
+            <option value="{{ payment.payment }}" selected>{{ payment.payment }}</option>
+            <option value="Bank">Bank</option>
+            <option value="In Cash">In Cash</option>
+        </select>
+        <button type="button"  data-target="selectField2" style="background-color: rgb(230, 171, 45); color: #fff;"  class="addButton">+</button>
+          
+         </div>
+          </div>
+    </div>
+    <div class="small-form" style="margin-top: 100px; width: 70%; margin-left: 40px;">
+      <h4>Add Amount</h4>
+    <div class="form-group row" style="margin-top: 20px;">
+        
+      <label  class="col-sm-2 col-form-label">Openning Balance*</label>
+      <div class="col-sm-10 col-md-7 col-9 ml-5">
+      <div class="input-group mb-2">
+        <input type="number" id="balance" name="balance" class="form-control" value="{{ payment.balance }}">     
+      </div>
+   </div>
+</div>
+    <div class="form-group row">
+        
+       <label  class="col-sm-2 col-form-label">Amount*</label>
+       <div class="col-sm-10 col-md-7 col-9 ml-5">
+       <div class="input-group mb-2">
+        <input type="number" id="amount" name="ammount" class="form-control" value="{{ payment.amount }}">
+      </div>
+    </div>
+</div>
+<div class="form-group row">
+        
+  <label  class="col-sm-2 col-form-label">Current Balance*</label>
+  <div class="col-sm-10 col-md-7 col-9 ml-5">
+  <div class="input-group mb-2">
+    <input type="number" id="difference" name="current_balance" class="form-control" value="{{ payment.current_balance }}">
+ </div>
+</div>
+</div>
+</div>
+    
+
+<button type="submit" class="btn  mt-3 " style="width: 100px; background-color: rgb(230, 171, 45);">Submit</button>
+</form>
+
+</div>
+
+<script>
+ 
+
+ $(document).ready(function() {
+    var fixedBalance = parseFloat($('#balance').val());
+    var fixedAmount = parseFloat($('#amount').val());
+
+    updateDifference();
+
+    $('#amount, #balance').on('input', function() {
+        updateDifference();
+    });
+
+    function updateDifference() {
+        var editedBalance = parseFloat($('#balance').val());
+        var editedAmount = parseFloat($('#amount').val());
+
+        if (isNaN(editedBalance) || isNaN(editedAmount)) {
+            $('#difference').val("");
+        } else {
+            var updatedDifference;
+
+            if (editedAmount === 0) {
+                updatedDifference = fixedBalance;
+            } else if (isNaN(editedAmount)) {
+                updatedDifference = fixedBalance - editedBalance;
+            } else {
+                updatedDifference = editedBalance - editedAmount;
+            }
+
+            if (updatedDifference < 0) {
+                updatedDifference = 0;
+            }
+
+            $('#difference').val(updatedDifference);
+        }
+    }
+});
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+          var vendorSelect = document.getElementById('vendor-select');
+          var emailInput = document.getElementById('email-input');
+          var Balanceinput = document.getElementById('balance')
+
+          var initialEmail = emailInput.value;
+          var initialBalance = Balanceinput.value;
+
+          vendorSelect.addEventListener('change', function() {
+              var selectedOption = vendorSelect.options[vendorSelect.selectedIndex];
+              var email = selectedOption.getAttribute('data-email') || initialEmail;
+              var balance = selectedOption.getAttribute('data-balance') || initialBalance;
+
+         
+              
+              emailInput.value = email;
+              Balanceinput.value = balance;
+            });
+      });
+// Get the add buttons
+var addButtons = document.getElementsByClassName('addButton');
+
+// Add event listeners to the add buttons
+Array.from(addButtons).forEach(function (button) {
+  button.addEventListener('click', function () {
+    var dynamicForm = document.getElementById('dynamicForm');
+    var newOptionInput = document.getElementById('newOptionInput');
+    var selectFieldId = this.getAttribute('data-target');
+    var selectField = document.getElementById(selectFieldId);
+
+    // Clear input field on toggle
+    newOptionInput.value = '';
+
+    // Toggle visibility
+    dynamicForm.style.display = 'block';
+
+    // Add event listener to the form submission
+    document.getElementById('submitButton').addEventListener('click', function () {
+      var optionName = newOptionInput.value.trim();
+
+      if (optionName) {
+        // Check if the option already exists in the select field
+        var exists = Array.from(selectField.options).some(function (option) {
+          return option.value === optionName;
+        });
+
+        if (!exists) {
+          // Create a new option element and add it to the select field
+          var newOption = document.createElement('option');
+          newOption.value = optionName;
+          newOption.text = optionName;
+          selectField.add(newOption);
+        }
+
+        // Hide the dynamic form
+        dynamicForm.style.display = 'none';
+      }
+    });
+  });
+});
+function closeDiv() {
+    var divElement = document.getElementById("dynamicForm");
+    divElement.style.display = "none";
+  }
+  </script>
+
+
+
+{% endblock %}

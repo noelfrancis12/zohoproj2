@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link href='https://unpkg.com/css.gg@2.0.0/icons/css/trash.css' rel='stylesheet'>
+<script src="https://cdn.jsdelivr.net/bootstrap.datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
+<style>
+  
+  .flowchart {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px;
+        flex-direction: column;
+}
+
+    .flowchart-item {
+        text-align: center;
+        padding: 10px;
+        background-color: lightblue;
+        border: 3px solid rgb(25, 91, 145);
+        border-radius: 5px;
+        width: 150px;
+        color: black;
+        font-size: 12px;
+        margin-top: 10px;
+    }
+    .flowchart-item i{
+        font-size: 15px;
+    }
+    .flowchart-connector {
+    flex-grow: 1;
+    height: 7px;
+    background-color: #ccc;
+    margin-top: 0%;
+    /* Add any other styles you want for the connector line */
+}
+    .box {
+      text-align: center;
+        padding: 10px;
+        background-color: lightblue;
+        border: 3px solid rgb(25, 91, 145);
+        border-radius: 5px;
+        width: 150px;
+        color: black;
+        font-size: 12px;
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+    
+    /* .connector {
+      width: 50px;
+      height: 0;
+      border-left: 2px solid black;
+    } */
+    
+    .branch {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+    
+    .branch .connector {
+      width: 0;
+      height: 50px;
+      border-top: 2px solid black;
+    }
+    
+    .branch .box {
+      margin-top: 10px;
+    }
+    /* .flowchart-connector {
+        flex-grow: 1;
+        height: 2px;
+        background-color: #ccc;
+        margin-top: 0%;
+
+    }
+    .box {
+      width: 100px;
+      height: 50px;
+      background-color: lightblue;
+      border: 1px solid black;
+      text-align: center;
+      line-height: 50px;
+      display: inline-block;
+    } */ 
+     
+    /* .branch {
+      display: flex;
+       flex-direction:column-reverse; 
+      align-items: center;
+      margin: 20px 0;
+      justify-content: center;
+
+    }
+    
+    .branch .connector {
+      width: 0;
+      height: 50px;
+      border-top: 2px solid black;
+    }
+    
+    .branch .box {
+      margin-top: 10px;
+    } */
+    /* @media (max-width: 768px) {
+        .flowchart {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .flowchart-item {
+            width: 120px;
+        }
+        .flowchart-connector {
+            height: 50px;
+            width: 2px; 
+            margin-left: 0%; 
+            transform: translateX(-50%);
+        }
+    }  */
+   
+</style>   
+<section >
+  <div class="row" style="top: 7rem; margin-left: 6rem;" >
+   
+    <div class="col-md-10 " >
+        <div class="row">
+            <div class="col-md-4"><a class="text-white" style="font-size: 2rem;">Recurring Invoices</a></div>
+            <div class="col-md-6 form-inline" style="margin-left: 55rem;margin-top: -2rem;"><a style="color: #ccc; background-color: rgb(210, 132, 30);" class="btn  mr-2" href="{% url 'create_recur' %}"><i class="fa-solid fa-plus "></i>New</a>
+                <a class="btn text-center px-3 py-2 " data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                role="button"><i class="fa fa-filter mx-3"></i>
+                </a>
+                <div class="dropdown-menu ">
+                    <a class="dropdown-item" href="{% url 'view_recurpage' %}">All</a>
+                    <a class="dropdown-item" href="{% url 'profileasc' %}">Profile A-Z</a>
+                    <a class="dropdown-item" href="{% url 'profiledesc' %}">Profile Z-A</a>
+
+                </div>
+            
+            </div>
+            <div class="row mt-4">
+                <div class="col-sm-12">
+            
+                  <!-- <form action="" method="POST" style="text-align: left;">
+                    {% csrf_token %} -->
+                    <input type="text" name="usr_in" id="search" placeholder="search here..." autocomplete="off">
+                    
+                    <!-- <button class="btn btn-light text-light" style="background-color: rgb(210, 132, 30);"><i class="mdi mdi-magnify"></i></button> -->
+                    
+                  
+                  <!-- </form> -->
+                </div>
+            </div>
+                        <!-- <a class="dropdown-item" href=""
+                            style="height: 40px; font-size: 15px; color: white; text-align: center;">Draft</a>
+                        <a class="dropdown-item" href=""
+                            style="height: 40px; font-size: 15px; color: white; text-align: center;">Sent</a> -->
+
+                    </div>
+                </div>
+            </div>
+          </div>   
+    
+        <table class="table  text-white" id="table">
+            <thead>
+              <tr>
+
+                <th>Profile Name</th>
+                <th>Type</th>
+                <th>Order_No</th>
+                <th>Repeat</th>
+                <th>Start_Date</th>
+                <th>End_Date</th>    
+                <th>Payment</th>
+
+
+
+              </tr>
+            </thead>
+             <tbody>
+              {% for v in recur %}
+     
+              <tr>
+     
+              <td onclick="location.href ='{% url 'viewrecur' v.id %}' ">{{v.name}}</td>
+
+                <td>{{v.entry_type}}</td>
+                <td>{{v.order_num}}</td>
+                <td>{{v.every}}</td>
+                <td>{{v.start}}</td> 
+                <td>{{v.end}}</td> 
+                <td>{{v.terms}}</td> 
+
+               
+               </tr> 
+               {% endfor %}
+            </tbody> 
+          </table>
+      
+          <div style="margin-left: 20px;padding-bottom: 10px;; margin-top: 20px;">
+            <!-- <img src="https://www.zoho.com/books/help/images/recurring-invoice/workflow-ri.png"> -->
+          
+            <div class="card radius-15 mt-5">
+                <div class="card-body">
+                    <div class="card-title">
+                        <h3 class="mb-0 text-center">Life cycle of a Recurring Invoices</h3>
+                        <br>
+                        <div class="flowchart">
+
+                          <!-- <div></div> -->
+                            <div class="flowchart-item text-uppercase" style="width: 200px;">
+                                <i class="fa-sharp fa-solid fa-bag-shopping" style="color: #daa430;"></i> Recurring Profile
+                            </div>
+                            <div class="flowchart-connector"></div>
+                            <div class="flowchart-item text-uppercase" style="width: 210px;">
+                                <i class="fa-sharp fa-solid fa-file" style="color: #daa430;"></i> Invoices
+                            </div>
+                          <div class="branches" style="display: flex; flex-direction: row;">
+                            <div class="branch">
+                              <div class="connector"></div>
+                              <div class="box">Save As Draft</div>
+                            </div>
+                            <!-- <div class="flowchart-connector">  </div> -->
+                            <div class="branch">
+                              <div class="connector"></div>
+                              <div class="box">Send Invoices</div>
+                            </div>
+                            <div class="branch">
+                              <div class="connector"></div>
+                              <div class="box">Charge Automatically and Sent Invoices</div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+                
+            </div>
+</div> 
+</section>
+
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+   <script>
+     $(document).ready(function() {
+       var $rows = $('#table tbody tr');
+       $('#search').keyup(function() {
+         var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+         $rows.show().filter(function() {
+           var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+           return !~text.indexOf(val);
+         }).hide();
+       });
+     });
+   
+   
+   $('.dropdown-toggle').dropdown();
+   
+   
+  
+   </script> 
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+  
+  #over:hover{
+        background-color: rgba(110, 110, 110, 0.616);
+        
+    }
+    .description-icon {
+    cursor: pointer;
+  }
+  
+  .description-icon::before {
+    content: attr(title);
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    z-index: 1;
+    white-space: nowrap;
+  }
+  
+  .description-icon:hover::before {
+    display: block;
+  }
+</style>
+
+<div class="fixed-top" style="top: 7rem; margin-left: 18rem;">
+    <div style="height: 600px;overflow-y: scroll;">
+        <div class="row">
+            <div class="col-md-3"><a class="text-white" style="font-size: 2rem;">All Projects</a>
+              
+             
+            </div>
+            <div class="col-md-3 "> 
+              <input type="text" id="vendorSearchInput" class="form-control" placeholder="Search Projects..." >
+            </div>
+
+            <div class="col-md-3 form-inline" style="margin-left: 49rem;margin-top: -2rem;"><a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="btn btn-warning mr-2" href="{% url 'proj' %}"><i class="fa-solid fa-plus "></i>New</a>&nbsp;
+             
+            </div>
+           
+            
+            
+        </div>   
+    
+        <div class="row">
+            <div class="col-sm-12 col-md-11 col-lg-11">
+              <table class="table text-white" id="vendorTable">
+                <thead>
+                  <tr>
+                    <th>CUSTOMER NAME</th>
+                    <th>CUSTOMER EMAIL</th>
+                    <th>PROJECT NAME</th>
+                    <th>BILLING METHOD</th>
+                    <th>DESCRIPTION</th>
+                    <th>RATE</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for v in proj %}
+                  <tr id="over">
+                    <!--<td onclick="location.href ='{% url 'detail' v.id %}' " > {{v.name}}</td> -->
+                    <td>{{v.c_name.customerName}}</td>
+                    <td>{{v.c_name.customerEmail}}</td>
+                    <td>
+                      <a href="{% url 'overview' v.id %}">{{v.name}}</a>
+                    </td>
+                    <td>{{v.billing}}</td>
+                    <td><span class="description-icon" title="{{v.desc}}">&#9432;</span></td>
+                    <td>
+                      {% if v.billing == "Fixed cost for project" or v.billing == "Based on project hours" %}
+                        {{v.rateperhour}} {{v.taskrph}}
+                      {% else %}
+                        Per hour
+                      {% endif %}
+                    </td>
+                    <td>
+                      <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="toggleButton btn btn-warning mr-2" href="#" id="actselect" data-project-id="{{ v.id }}">{{ v.active|yesno:"Active,Inactive" }}</a>
+                      
+                      
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              
+            </div>
+            <div class="col-sm-12 col-md-1 col-lg-1"></div>
+
+        </div>
+      
+
+           
+        
+
+    </div>
+
+</div>
+<script>
+  var toggleButtons = document.querySelectorAll('.toggleButton');
+
+  toggleButtons.forEach(function(button) {
+    button.addEventListener('click', function(event) {
+      event.preventDefault();
+      var projectId = button.getAttribute('data-project-id');
+      var url = '/toggle-status/' + projectId + '/';
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          button.innerHTML = data.status ? 'Active' : 'Inactive';
+        })
+        .catch(error => {
+          console.log('Error:', error);
+        });
+    });
+  });
+</script>
+<script>
+
+  var vendorSearchInput = document.getElementById('vendorSearchInput');
+var vendorRows = document.querySelectorAll('#vendorTable tbody tr');
+
+vendorSearchInput.addEventListener('input', function () {
+  var searchValue = vendorSearchInput.value.toLowerCase();
+
+  vendorRows.forEach(function (row) {
+    var cells = row.querySelectorAll('td');
+    var found = false;
+
+    cells.forEach(function (cell) {
+      var cellValue = cell.textContent.toLowerCase();
+      if (cellValue.includes(searchValue)) {
+        found = true;
+      }
+    });
+
+    if (found) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+});
+</script>
+
+
+
+
+
+{% endblock %}

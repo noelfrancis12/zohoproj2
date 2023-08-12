@@ -1,0 +1,415 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    
+    
+    .form-check {
+      margin-bottom: 10px;
+    }
+    
+    /* style submit button */
+    button[type="submit"] {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    button[type="submit"]:hover {
+      background-color: #0069d9;
+    }
+  </style>
+
+<div class="fixed-top" style="top: 8rem; margin-left: 18rem;" >
+<div style="height: 600px; overflow-y: scroll;overflow-x: clip;">
+  <form action="{% url 'add_expense' %}" method="post" onsubmit="return validateForm()">
+    {% csrf_token %}
+    {% comment %} <div class="form-group">
+      <label for="profile_name">Profile Name</label>
+      <input type="text"  id="profile_name" name="profile_name">
+    </div> {% endcomment %}
+
+
+    <div class="form-group row mt-4">
+      <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Profile Name</label></div>
+       <div class="col-sm-12 col-md-6 col-lg-6">
+           <input  type="text" class="form-control" style="background-color:#2c2e33;" name="profile_name" required>     
+           <div class="invalid-feedback">Please fill out this field.</div>   
+
+       </div>
+   </div>
+
+
+   <div class="form-group row mt-4">
+    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Repeat Every</label></div>
+    <div class="col-sm-12 col-md-6 col-lg-6">
+      <select class="form-control" id="repeat_every" name="repeat_every" style="background-#2c2e33:white;color:black;">
+        <option value="Week" disabled>Week</option>
+        <option value="2 Weeks">2 Weeks</option>
+        <option value="Month" disabled>Month</option>
+        <option value="2 Months">2 Months</option>
+        <option value="3 Months">3 Months</option>
+        <option value="6 Months">6 Months</option>
+        <option value="Year" disabled>Year</option>
+        <option value="2 Years">2 Years</option>
+        <option value="3 Years">3 Years</option>
+      </select>      
+    </div>
+  </div>
+
+  <div class="form-group row mt-4">
+    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Start Date</label></div>
+     <div class="col-sm-12 col-md-6 col-lg-6">
+      <input type="date"  id="start_date" name="start_date" class="form-control" style="background-color:#2c2e33;color:black;">
+    </div>
+  </div>
+
+  <div class="form-group row mt-4">
+    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+        <label>Ends On</label>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-6">
+        <input type="date" id="ends_on" name="ends_on" class="form-control" style="background-color:#2c2e33;color:black;" {% if never_expire %}disabled{% endif %}>
+    </div>
+    <div style="margin-left:318px;">
+        <div class="form-check">
+            <input type="checkbox" id="never_expire" name="never_expire" class="form-check-input" {% if never_expire %}checked{% endif %}>
+            <label class="form-check-label" for="never_expire">Never Expire</label>
+          </div>
+    </div>
+</div>
+
+
+
+
+  <div class="form-group row mt-4">
+    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Expence Account</label></div>
+     <div class="col-sm-12 col-md-6 col-lg-6">
+      <div class="input-group">
+        <select class="form-control" id="expense_account" name="expense_account" class="form-control" style="background-color:#2c2e33;color:black;"></select>
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="button" id="expense_account" onclick="window.location.href='{% url 'newexp' %}'" style="height:38px;">New Account</button>
+        </div>
+      </div>
+    </div>
+    </div>  
+
+    <div class="form-group row mt-4">
+      <div class="col-sm-12 col-md-3 col-lg-3 col-form-label" style="margin-top:8px;"><label>Expence Type</label></div>
+       <div class="col-sm-12 col-md-6 col-lg-6" style="display:flex;">
+      <div class="form-check" >
+        <input class="form-check-input" type="radio" name="expense_type" id="expense_type1" value="goods" >
+        <label class="form-check-label" for="expense_type1">
+          Goods
+        </label>
+      </div>
+      <div class="form-check" style="margin-left:30px;">
+        <input class="form-check-input" type="radio" name="expense_type" id="expense_type2" value="services" >
+        <label class="form-check-label" for="expense_type2">
+          Services
+        </label>
+      </div>
+      <div class="form-group" id="goods-bottom" style="display:none" >
+        <label for="goods-label" style="margin-top:54px;margin-left:-187px;">HSN</label>
+        <input type="text" class="form-control" id="goods-label" name="goods_label" oninput="validateHSN(this)" style="background-color:#2c2e33;margin-left: -187px;width: 191px;margin-top:5px;">
+        <small id="hsn-error" class="text-danger"></small>
+      </div>
+    </div>
+    </div>
+
+    <div class="form-group row mt-4">
+      <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Amount</label></div>
+       <div class="col-sm-12 col-md-6 col-lg-6">
+        <div class="input-group-prepend" style="margin-left:-151px;">
+          <select class="form-control" id="currency" name="currency" style="width:50px; margin-left:151px;color:white;">
+            <option value="INR" >INR</option>
+          </select>
+        </div>
+        <option value="INR" ></option><input type="text"  id="amount" name="amount" class="form-control" style="background-color:#2c2e33;color:black;margin-top:-57px;width: 603px;margin-left: 48px;width: 547px;">
+      </div>
+    </div>
+    
+
+    <div class="form-group row mt-4">
+      <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>paidthrough</label></div>
+       <div class="col-sm-12 col-md-6 col-lg-6">
+        <select name="paidthrough" id="paidthrough" class="form-control" style="background-color:#2c2e33;color:black;">
+            <option value="NET 60" >NET 60</option>
+            <option value="NET 45" >NET 45</option>                          
+            <option value="NET 30">NET 30</option>
+            <option value="Due on Receipt" selected>Due on Receipt</option>
+        </select>
+    </div>
+    </div>
+  
+
+    <div class="form-group row mt-4">
+      <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Vendor</label></div>
+       <div class="col-sm-12 col-md-6 col-lg-6">
+      <div class="input-group">
+          <select class="form-control" id="vendor" name="vendor" style="background-color:#2c2e33;color:black;">
+            {% for vendor in vendors %}
+            <option value="{{vendor.pk}}" data-gst-number="{{vendor.gst_number}}" {% if vendor.pk|stringformat:"s" == selected_vendor_id %}selected{% endif %}>
+              {{vendor.vendor_display_name}} 
+            </option>
+          {% endfor %}
+          </select>
+          <div class="input-group-append">
+              <button class="btn btn-primary" type="button" id="vendor"
+                  onclick="window.location.href='{% url 'vendor' %}'" style="height:38px;">Add new vendor</button>
+          </div>
+      </div>
+    </div>
+    
+  
+      
+    <div class="form-group row mt-4">
+      <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>GST Treatment</label></div>
+       <div class="col-sm-12 col-md-6 col-lg-6">
+    <select name="gst" id="gst" class="form-control" onchange="toggleTextBox()" style="background-color:#2c2e33;margin-left: 6px; width: 602px;color:black;">
+      <option value="" selected></option>
+      <option value="Registered Business-Regular Business that is registered under GST">Registered Business-Regular Business that is registered under GST</option>
+      <option value="Registered Business-Composition Business that is registered under the Composition scheme in GST">Registered Business-Composition Business that is registered under the Composition scheme in GST</option>
+      <option value="Unregistered Business-not Registered under GST">Unregistered Business-not Registered under GST</option>
+      <option value="Overseas- Persons with whom you do import or exports of supplies outside India">Overseas- Persons with whom you do import or exports of supplies outside India</option>
+      <option value="Special Economic Zone">Special Economic Zone</option>
+    </select><br>
+    <div id="textboxContainer" style="display: none;">
+      <input type="text" id="textbox" class="form-control" placeholder="Enter additional information" value="" style="background-color:#2c2e33;margin-left: 6px; width: 602px;color:black;">
+    </div>
+  </div>
+</div>
+
+  
+<div class="form-group row mt-4">
+  <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Destination of supply</label></div>
+   <div class="col-sm-12 col-md-6 col-lg-6">
+        <select name="destination" id="destination" class="form-control" style="background-color:#2c2e33;margin-left: 6px; width: 602px;color:black;">
+        <option value="value" selected></option>
+      <option value="[AN]-Andaman And Nicobar Islands">[AN]-Andaman And Nicobar Islands</option> <option value="[AD]-Andhra Pradesh">[AD]-Andhra Pradesh</option>
+      <option value="[AR]-Arunachal Pradesh">[AR]-Arunachal Pradesh	</option> <option value="[AS]-Assam">[AS]-Assam</option>
+      <option value="[BR]-Bihar">[BR]-Bihar</option> <option value="[CH]-	Chandhigarh">[CH]-	Chandhigarh</option><option value="[CG]-Chattisgarh">[CG]-Chattisgarh</option>
+      <option value="[DD]-Daman Diu">[DD]-Daman Diu</option><option value="[DL]-	Delhi">[DL]-	Delhi</option><option value="[GA]-Goa">[GA]-Goa</option> <option value="[GJ]-Gujarat">[GJ]-Gujarat</option>
+      <option value="[HR]-Haryana">[HR]-Haryana</option> <option value="[HP]-Himachal Pradesh">[HP]-Himachal Pradesh</option>
+      <option value="[JK]-Jammu And Kashmir">[JK]-Jammu And Kashmir</option><option value="[JH]-Jharkand">[JH]-Jharkand</option>
+      <option value="[KA]-Karnataka">[KA]-Karnataka</option><option value="[KL]-Kerala">[KL]-Kerala</option>
+      <option value="[LA]-Ladakh">[LA]-Ladakh</option><option value="[LD]-Lakshadweep">[LD]-Lakshadweep</option>
+      <option value="[MP]-Madhyapradesh">[MP]-Madhyapradesh</option><option value="[MH]-Maharashtra">[MH]-Maharashtra</option>
+      <option value="[MN]-Manipur">[MN]-Manipur</option>  <option value="[ML]-Meghalaya">[ML]-Meghalaya</option>
+    <option value="[MZ]-Mizoram">[MZ]-Mizoram</option> <option value="[NL]-Nagaland">[NL]-Nagaland</option> <option value="[NL]-Nagaland">[NL]-Nagaland</option>
+     <option value="[OD]-Odisha">[OD]-Odisha</option><option value="[PY]-Puducherry">[PY]-Puducherry</option>
+      <option value="[PB]-Punjab">[PB]-Punjab.</option><option value="[RL]-Rajasthan">[RL]-Rajasthan</option>
+      <option value="[SK]-Sikkim">[SK]-Sikkim</option><option value="[TN]-Tamilnadu">[TN]-Tamilnadu</option>
+      <option value="[TS]-Telenghana">[TS]-Telenghana</option><option value="[TR]-Tripura">[TR]-Tripura</option><option value="[UP]-Uttar Pradesh">[UP]-Uttar Pradesh</option>
+      <option value="[UK]-Utharakhand">[UK]-Utharakhand</option><option value="[WB]-West Bengal">[WB]-West Bengal</option>
+      <option value="[OT]-Other Territory">[OT]-Other Territory</option>
+          </select>
+    </div>
+
+  <div class="form-group row mt-4">
+  <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Tax</label></div>
+   <div class="col-sm-12 col-md-6 col-lg-6">
+        <select  id="tax" name="tax" class="form-control" style="background-color:#2c2e33;margin-left: 11px; width: 602px;color:black;">
+          <option value="GST0[0%]">GST0[0%]</option>
+          <option value="GST5[5%]">GST5[5%]</option>
+          <option value="GST12[12%]">GST12[12%]</option>
+          <option value="GST18[18%]">GST18[18%]</option>
+          <option value="GST28[28%]">GST28[28%]</option>
+        </select>
+    </div>
+
+    <div class="form-group row mt-4">
+      <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Notes</label></div>
+       <div class="col-sm-12 col-md-6 col-lg-6">
+        <input type="text" class="form-control" id="notes" name="notes" style="background-color:#2c2e33;margin-left: 16px; width: 603px;color:black;">
+    </div>
+  </div>
+
+    <div class="form-group row mt-4">
+      <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Customer Name</label></div>
+       <div class="col-sm-12 col-md-6 col-lg-6">
+      <div class="input-group" style="width:617px;">
+        <select class="form-control" id="customername" name="customername" class="form-control" style="background-color:#2c2e33;margin-left:15px;color:black;">
+          <!-- Existing options -->
+        </select>
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="button" id="addVendorButton" onclick="window.location.href='{% url 'add_customer' %}'" style="height:38px;">Add new customer</button>
+        </div>
+      </div>
+      
+      <div class="form-group row mt-4">
+        <!-- Add a hidden input field for the activation tag with value "active" -->
+        <input type="hidden" name="activation_tag" value="active">
+    </div>
+    <br><br>
+    <div class="form-group" style="margin-left:200px;display:flex;">
+        <button type="submit" class="btn btn-primary">Save</button>&nbsp;&nbsp;
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='{% url 'recurringbase' %}'" style="color:orangered;">Cancel</button>
+    </div>
+</form>
+</div>
+</div>
+<script>
+  var goodsRadio = document.getElementById('expense_type1');
+  var goodsBottom = document.getElementById('goods-bottom');
+
+  goodsRadio.addEventListener('change', function() {
+    if (this.checked) {
+      goodsBottom.style.display = 'block';
+    }
+  });
+
+  var servicesRadio = document.getElementById('expense_type2');
+
+  servicesRadio.addEventListener('change', function() {
+    if (this.checked) {
+      goodsBottom.style.display = 'none';
+    }
+  });
+</script>
+<script>
+  function validateGSTNumber(gstNumber) {
+    // Regular expression to validate GST number
+    var gstRegex = /^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$/;
+
+    // Check if the entered GST number matches the regex pattern
+    if (!gstRegex.test(gstNumber)) {
+      alert("Invalid GST number. Please enter a valid GST number.");
+      return false;
+    }
+    return true;
+  }
+
+  function validateForm() {
+    var gstTreatment = document.getElementById("gst").value;
+
+    // Check if the selected GST treatment requires GST number validation
+    if (gstTreatment !== "Unregistered Business-not Registered under GST") {
+      var gstNumber = document.getElementById("textbox").value;
+      return validateGSTNumber(gstNumber);
+    }
+
+    return true;
+  }
+</script>
+<script>
+  // Fetch previously added account names
+  fetch('{% url 'get_account_names' %}')
+    .then(response => response.json())
+    .then(data => {
+      const expenseAccountDropdown = document.getElementById('expense_account');
+
+      // Populate the dropdown with account names
+      data.forEach(accountName => {
+        const option = document.createElement('option');
+        option.value = accountName;
+        option.textContent = accountName;
+        expenseAccountDropdown.appendChild(option);
+      });
+    })
+    .catch(error => console.error(error));
+</script>
+
+<script>
+  function toggleTextBox() {
+    var gstTreatment = document.getElementById("gst").value;
+    var textboxContainer = document.getElementById("textboxContainer");
+    var textbox = document.getElementById("textbox");
+
+    if (gstTreatment !== "Unregistered Business-not Registered under GST") {
+      textboxContainer.style.display = "block";
+      textbox.value = getGstNumber();
+    } else {
+      textboxContainer.style.display = "none";
+      textbox.value = "";
+    }
+  }
+
+  function getGstNumber() {
+    var vendorSelect = document.getElementById("vendor");
+    var selectedVendorId = vendorSelect.value;
+    var selectedVendorOption = vendorSelect.options[vendorSelect.selectedIndex];
+    var gstNumber = selectedVendorOption.getAttribute("data-gst-number");
+    return gstNumber;
+  }
+
+  function updateGstNumber() {
+    var textbox = document.getElementById("textbox");
+    textbox.value = getGstNumber();
+  }
+</script>
+
+<script>
+  function validateHSN(input) {
+    const hsnValue = input.value.trim();
+    const hsnError = document.getElementById('hsn-error');
+  
+    if (hsnValue.length === 6 && /^[0-9]+$/.test(hsnValue)) {
+      hsnError.textContent = '';
+    } else {
+      hsnError.textContent = 'Please enter a valid 6-digit number.';
+    }
+  }
+  </script>
+
+<script>
+  // Get the dropdown element
+  const customerDropdown = document.getElementById('customername');
+
+  // Function to fetch customer names and update the dropdown
+  function fetchCustomerNames() {
+    // Make an AJAX request to the server to fetch the customer names
+    fetch('/get_customer_names')
+      .then(response => response.json())
+      .then(data => {
+        // Clear existing options
+        customerDropdown.innerHTML = '';
+
+        // Add new options based on fetched customer names
+        data.forEach(customer => {
+          const option = document.createElement('option');
+          option.value = customer.id; // Set the appropriate value for the option
+          option.textContent = customer.name; // Set the customer name as the option text
+          customerDropdown.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
+  // Add click event listener to the "Add new customer" button
+  const addCustomerButton = document.getElementById('addVendorButton');
+  addCustomerButton.addEventListener('click', () => {
+    window.location.href = '{% url 'add_customer' %}';
+  });
+
+  // Fetch customer names when the page loads
+  fetchCustomerNames();
+</script>
+
+<script>
+  // Disable the 'ends_on' field when 'never_expire' checkbox is checked
+  const neverExpireCheckbox = document.getElementById('never_expire');
+  const endsOnInput = document.getElementById('ends_on');
+  
+  neverExpireCheckbox.addEventListener('change', function() {
+      if (neverExpireCheckbox.checked) {
+          endsOnInput.disabled = true;
+      } else {
+          endsOnInput.disabled = false;
+      }
+  });
+</script>
+
+
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+ 
+{% endblock %}

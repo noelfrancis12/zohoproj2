@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    * {
+
+        font-family: "Gill Sans", sans-serif;
+        color: white;
+    }
+
+    .searchbar {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem .8rem;
+    }
+
+    .searchbar .left input[text] {
+
+        width: 15vw;
+    }
+
+    .searchbar .right .btn {
+        width: 10vw;
+        border: 2px solid rgb(0, 102, 255);
+        font-size: 1.2vw;
+        color: rgb(235, 197, 31);
+    }
+
+    .searchbar .right .btn i {
+        color: rgb(235, 197, 31);
+    }
+
+    .table tbody tr:hover {
+        font-weight: 600;
+    }
+</style>
+<section>
+    <div class="containerprof p-3">
+        <div class="head text-light p-3">
+            <h4>ALL EMPLOYEE</h4>
+        </div>
+        <!-- <span class="text-danger" id="no-data"></span> -->
+        <!-- <input type="text" id="no-data" style="color: rgb(255, 255, 255);background: transparent;"> -->
+        <div class="searchbar">
+            <div class="left">
+                <input class="form-control" type="text" placeholder="Search..." name="search" id="search"
+                    onkeyup="searchFunction()" style="color: rgb(255, 255, 255);background: transparent;">
+            </div>
+            <div class="right">
+                <a class="btn btn-outline-primary" href="" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                role="button"><i class="fa fa-filter"></i>
+                </a>
+                <div class="dropdown-menu" id="filterMenu">
+                    <a class="dropdown-item" href="#" data-value="All">All</a>
+                    <a class="dropdown-item" href="#" data-value="Active">Active</a>
+                    <a class="dropdown-item" href="#" data-value="Inactive">Inactive</a>
+                </div>
+                <a class="btn btn-outline-primary" href="{% url 'payroll_create' %}"><i class="fa fa-plus"></i>NEW</a>
+            </div>
+
+        </div>
+        <table class="table" id="mytable">
+            <thead>
+                <tr id="ckeck_th">
+                    <th scope="col">DATE</th>
+                    <th scope="col">NAME</th>
+                    <th scope="col">EMAIL</th>
+                    <th scope="col">DESIGNATION</th>
+                    <th scope="col">SALARY TYPE</th>
+                    <th scope="col">ACTIVE</th>
+                    <th scope="col">AMOUNT</th>
+                    <th scope="col">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in pay %}
+                    <tr class='clickable-row' data-href="{% url 'payroll_view' i.id %}">
+                        <td class="pt-3">{{ i.joindate}}</td>
+                        <td class="pt-3">{{ i.name}}</td>
+                        <td class="pt-3">{{ i.email}}</td>
+                        <td class="pt-3">{{ i.designation}}</td>
+                        <td class="pt-3">{{ i.salary_type }}</td>
+                        <td class="pt-3">{{ i.status}}</td>
+                        <td class="pt-3">{{ i.salary}}</td>
+                        <td class="pt-3">
+                            <a href="{% url 'payroll_delete' i.id %}">
+                                <i class="fa fa-trash text-danger" style="font-size: large;"></i>
+                            </a>
+                        </td>
+                    </tr>
+                
+
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</section>
+
+<script>
+    function searchFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("search");
+        filter = input.value.toLowerCase();
+        table = document.getElementById("mytable");
+        tr = table.getElementsByTagName("tr");
+        // input.style.borderColor = "green";
+        for (i = 1; i < tr.length; i++) {
+            let rowVisible = false;
+            td = tr[i].getElementsByTagName("td");
+            for (j = 0; j < td.length; j++) {
+                  if (td[j]) {
+                      txtValue = td[j].textContent || td[j].innerText;
+                      if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                          rowVisible = true;
+                          break;
+                      }
+                  }
+              }
+  
+              // Show/hide the row based on the search results
+              tr[i].style.display = rowVisible ? "" : "none";
+          }
+      }
+    jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});
+</script>
+<script>
+     const filterMenuLinks = document.querySelectorAll('#filterMenu a');
+        const table = document.getElementById('mytable').getElementsByTagName('tr');
+
+        for (const link of filterMenuLinks) {
+            link.addEventListener('click', filterTable);
+        }
+
+        function filterTable(event) {
+            event.preventDefault(); // Prevent the link's default behavior (page navigation).
+
+            const selectedValue = this.getAttribute('data-value');
+
+            for (let i = 1; i < table.length; i++) {
+                const row = table[i];
+                const status = row.getElementsByTagName('td')[5].innerText;
+
+                if (selectedValue === 'All' || status.toLowerCase() === selectedValue.toLowerCase()) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+</script>
+{% endblock %}

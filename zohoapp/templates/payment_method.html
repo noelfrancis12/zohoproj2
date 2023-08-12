@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .table-container {
+        height: 600px;
+        margin-left:90px;
+    }
+    .button-container {
+       width: 100px;
+        margin-left: 540px;
+        background-color: rgb(230, 171, 45);
+    }
+    .form-control{
+      background-color: black transparent;
+    }
+    .button-container a{
+        color: #FFFEEE;
+    }
+    td a{
+        color: rgb(230, 171, 45);
+    }
+    #over:hover{
+        background-color: rgba(110, 110, 110, 0.616);
+        
+    }
+    td {
+    white-space: nowrap; /* Prevent content from wrapping */
+    /* Add any additional styles or width as needed */
+    color: #FFFEEE;
+  }
+  tr{
+    color: #fff;
+  }
+  
+</style>
+
+<h1>Payment Made</h1>
+
+
+
+
+<div class="container" style="margin-top: 50px;">
+<div class="row">
+    <div class="col-md-3">
+    <div class="search-bar">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="search" name="query" id="searchInput"  placeholder="Search Payment Made" style="width: 300px;" class="form-control custom-height">
+
+            </div>
+            <div class="col-md-9">
+                <div class="input-group-append">
+                    <button type="submit" class="btn   custom-height" onclick="searchTable()" style="background-color: rgb(230, 171, 45); margin-left: 233px; height: 35px;">Search</button>
+                </div>
+            </div>
+        </div>
+        
+            
+        
+    </div>
+</div>
+<div class="col-md-9">
+    <div class="button-container">
+        <a type="button" class="btn  ml-auto" style="width: 100px;" href="{% url 'paymentadd_method' %}">+new</a>
+    </div>
+</div>
+</div>
+    <div class="table-responsive">
+    <table id="vendorTable" class="table" style="width:100%;  margin-top: 40px;">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Vendor</th>
+                <th>Reference</th>
+                <th>Payment Date</th>
+                <th>Payment</th>
+                <th>Payment Method</th>
+                <th>Ammount Received</th>
+
+
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in paymnt %}
+                                <tr id="over">
+                                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">{{ p.id}}</td>
+                                    <td><a href="{% url 'payment_details_view' p.id %}">{{ p.vendor.first_name}}</a></td>
+                                    <td>{{ p.reference}}</td>
+                                    <td>{{ p.date}}</td>
+                                    <td>{{ p.payment}}</td>  
+                                    <td>{{ p.cash }}</td>  
+                                    <td>₹{{ p.amount }}</td> 
+                                    </tr>
+                                    {% endfor %}
+
+            </tbody>
+            </table>
+        </div>
+        </div>
+
+<script>
+
+function searchTable() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("searchInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("vendorTable");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td");
+        for (var j = 0; j < td.length; j++) {
+            var cell = td[j];
+            if (cell) {
+                txtValue = cell.textContent || cell.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    break;
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+}
+
+    </script>
+
+{% endblock %}

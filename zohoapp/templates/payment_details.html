@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.10.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+
+
+<style>
+    .custom-height {
+        height: 40px;
+    }
+
+    .list-item {
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    .vertical-separator {
+        border-right: 1px solid #ddd;
+    }
+
+    .list-item:hover {
+        border: 1px solid rgb(230, 171, 45);
+        border-radius: 5px;
+       
+    }
+
+    /* Fix the CSSParseError by removing the unmatched closing bracket */
+  /*  .custom-item:hover {
+        color: white;
+    }*/
+
+    .btn-group {
+        display: inline-flex;
+    }
+
+    .btn-group > * {
+        margin-right: -2px;
+    }
+
+    
+     p{
+        font-size: 18px;
+    }
+    .p{
+        color: rgb(230, 171, 45);
+    }
+</style>
+
+
+<section id="container">
+    <div class="row" style="top: 7rem;">
+        <div class="col-md-5">
+            <div class="search-bar">
+                <form class="input-group">
+                    <input type="search" id="search-input" placeholder="Search Payment Made" class="form-control custom-height">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn  custom-height" style="background-color: rgb(230, 171, 45);">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container-fluid mt-5">
+        <div class="row">
+            <div class="col-md-5 vertical-separator">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb">Payment Made</h3>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'paymentadd_method' %}" class="btn" style="background-color: rgb(230, 171, 45);">+New</a>
+                        
+                    </div>
+                </div>
+
+                <div class="list-group mt-3">
+                    {% for p in payment_items %}
+                    <a href="#" class="list-item" data-journal-id="{{ p.id }}"
+                        data-journal-details-url="{% url 'payment_lists' p.id %}">
+                        <div class="d-flex justify-content-between text-white">
+                            <span>{{ p.vendor.first_name }}</span>
+                            <span><i class="fa fa-inr"></i>{{ p.amount }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-white mt-2">
+                            <span>{{ p.date }}</span>
+                            <!-- <span>{{ journal.status }}</span> -->
+                            
+                        </div>
+                        
+                    </a>
+                    
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="d-flex justify-content-between align-items-center">
+                    <button class="btn btn-outline-danger template-button">Template</button>
+
+                    <div class="">   
+                                       
+                        <a href="#" class="text-white editoption" style="margin-right: 10px;"><i
+                            class="fa fa-edit"></i></a>
+
+
+                            <a href="#" class="text-white" onclick="convertToPDF()"  style="margin-right: 10px;"><i
+                                class="fa fa-file-pdf"></i></a>
+                        <a  class="text-white" onclick="printPage()" style="margin-right: 10px;"><i
+                                class="fa fa-print"></i></a>
+                        
+                                <a href="#" class="text-white deleteoption" style="margin-right: 10px;" >
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                    </div>
+                </div>
+                <div class="details-section mt-3">
+                    <div class="list-group">
+                        <h2>Payment Details</h2>
+                          <p>Payment: <span class="p">{{ payment.payment }}</span></p>
+                          <p>Reference: <span class="p">{{ payment.reference }}</span></p>
+                          <p>Payment Date: <span class="p">{{ payment.date }}</span></p>
+                          <p>GST Treatment: <span class="p">{{ payment.gst }}</span></p>
+                          <p>Payment Method: <span class="p">{{ payment.cash }}</span></p>
+                          <p>Amount Received: <span class="p">₹{{ payment.amount }}</span></p>
+                          <p>Current Balance: <span class="p">₹{{ payment.current_balance }}</span></p>
+                          <p>Email: <span class="p">{{ payment.vendor.vendor_email }}</span></p>
+               
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $(document).ready(function () {
+        $('.list-item').click(function () {
+            $('.list-item').removeClass('active');
+            $(this).addClass('active');
+
+            var journalId = $(this).data('journal-id');
+            var journalDetailsUrl = $(this).data('journal-details-url');
+            $('.details-section').html('<p>Loading payment details...</p>');
+            $.ajax({
+                url: journalDetailsUrl,
+                method: 'GET',
+                data: {
+                    journal_id: journalId
+                },
+                success: function (response) {
+                    $('.details-section').html(response);
+                    $('.template-button').show();
+                },
+                error: function () {
+                    $('.details-section').html('<p>Failed to load payment details.</p>');
+                }
+            });
+        });
+
+        
+        $('.template-button').click(function () {
+            var selectedJournalId = $('.list-item').data('journal-id');
+            sessionStorage.setItem('selectedJournalId', selectedJournalId);
+            var journalDetailsUrl = "{% url 'payment_template'  %}?payment_id=" + selectedJournalId;
+            window.location.href = journalDetailsUrl;
+        });
+        $('.editoption').click(function() {
+            var selectedJournalId = $('.list-item').data('journal-id');
+            var editUrl = "{% url 'payment_edit'  %}?payment_id=" + selectedJournalId;
+            window.location.href = editUrl;
+        });
+
+        $('.deleteoption').click(function() {
+            var selectedJournalId = $('.list-item').data('journal-id');
+            var editUrl = "{% url 'payment_delete_details'  %}?payment_id=" + selectedJournalId;
+            window.location.href = editUrl;
+        });
+
+        
+
+         
+        
+       
+
+    });
+    
+
+    function printPage() {
+    window.print();
+}
+
+
+
+function convertToPDF(){
+    const container = document.getElementById('container');
+
+    const options = {
+        filename: 'payment.pdf',
+        image:{type:'jpeg',quality:0.98},
+        htmt2canvas:{scale:2},
+        jsPDF:{unit:'mm', format:'a4', orientation:'portrait'}
+    };
+    html2pdf().from(container).set(options).save();
+}
+$(document).ready(function () {
+        // Function to handle the search functionality
+        function performSearch() {
+            var searchQuery = $('#search-input').val().trim().toLowerCase();
+            $('.list-item').each(function () {
+                var text = $(this).text().toLowerCase();
+                if (text.includes(searchQuery)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        // Trigger the search when the "Search" button is clicked
+        $('.search-bar button').click(function (event) {
+            event.preventDefault();
+            performSearch();
+        });
+
+        // Trigger the search when the user types in the search input
+        $('#search-input').keyup(function () {
+            performSearch();
+        });
+
+        // Show all items initially when the page is loaded
+        $('.list-item').show();
+    });
+
+</script>
+
+{% endblock %}

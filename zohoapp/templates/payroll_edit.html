@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    * {
+
+        font-family: "Gill Sans", sans-serif;
+        color: white;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    input[type="email"],
+    input[type="file"],
+    .gen-info textarea,
+    .gen-info select,
+    .data select,
+    .data option,
+    .gen-info option {
+        background-color: rgb(73, 72, 72);
+        color: white;
+        border: none;
+    }
+
+    input[type="text"],.gen-info textarea {
+
+        text-transform: capitalize;
+
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="number"]:focus,
+    input[type="email"]:focus,
+    input[type="file"]:focus,
+    .gen-info textarea:focus,
+    .data select:focus,
+    .gen-info select:focus {
+        background: transparent;
+        color: white;
+    }
+
+    .gen-info .left {
+        padding-right: 2rem;
+    }
+
+
+    .action-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .action-button button {
+        width: 13vw;
+        font-size: 1.2vw;
+        margin: 0.5rem .5rem;
+    }
+
+    label {
+        font-size: 1.2vw;
+    }
+
+    .containerprof {
+
+        position: relative;
+
+    }
+    
+    
+</style>
+<section>
+    <div class="containerprof p-5">
+        <div class="header pb-5">
+            <h3>EDIT EMPLOYEE</h3>
+            <hr>
+        </div>
+        <form method="POST" action="{% url 'editpayroll' pay.id %}" enctype="multipart/form-data" id="myForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="data col-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Name</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control" name="name" value="{{pay.name}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Alias</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control" name="alias" value="{{pay.alias}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Date of joining</label>
+                        </div>
+                        <div class="col-6"><input type="date" class="form-control" name="joindate" value="{{pay.joindate | date:'Y-m-d'}}"></div>
+                    </div>
+                    <!-- <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Define salary details</label>
+                        </div>
+                        <div class="col-6">
+                            <select class="form-control" name="saltype" id="sal" onchange="salFunction()">
+                                <option value="">Select</option>
+                                <option value="Fixed">Fixed</option>
+                                <option value="Variable">Variable</option>
+                            </select>
+                        </div>
+                    </div> -->
+                    <div id="fixed">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="">Salary Amount</label>
+                            </div>
+                            <div class="col-6"><input type="number" class="form-control" name="salary" value="{{pay.salary}}"></div>
+                        </div>
+
+                    </div>
+                    
+                </div>
+                <div class="image col-6 col-lg-6 col-md-6 col-sm-12">
+
+                    <div class="row">
+                        <div class="col-5 text-center">
+                            <label for="">Image</label>
+                        </div>
+                        <div class="col-7 imgedit">
+                            <label for="image-input">
+                                <img src="{{ pay.image.url }}" alt="" width="190px" height="200px"
+                                    id="img" style="background-color: rgba(156, 156, 156, 0.267); border-radius: 30px;">
+                                </label>
+                            <input id="image-input" type="file" name="file" class="form-control" accept="image/*" 
+                                onchange="loadFile(event)" style="display: none;">
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <script>
+                    var loadFile = function (event) {
+                        var reader = new FileReader();
+                        reader.onload = function () {
+                            var output = document.getElementById('img');
+                            output.src = reader.result;
+                        };
+                        reader.readAsDataURL(event.target.files[0]);
+                    };
+
+                </script>
+            </div>
+            <div class="gen-info row pt-5">
+                <div class="left col-6 col-lg-6 col-md-6 col-sm-12">
+                    <h4 class="text-center py-2">General information</h4>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Employee Number</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control" name="empnum" value="{{pay.emp_number}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Designation</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control" name="designation" value="{{pay.designation}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Location</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control" name="location" value="{{pay.location}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Gender</label>
+                        </div>
+                        <div class="col-6">
+                            <input type="text" name="gender" class="form-control" value="{{pay.gender}}">
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Date of Birth</label>
+                        </div>
+                        <div class="col-6"><input type="date" class="form-control" name="dob" value="{{pay.dob | date:'Y-m-d'}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Blood Group</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control" name="blood" value="{{pay.blood}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Father's Name/Mother's Name</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control" name="fm_name" value="{{pay.parent}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Spouse's Name</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control" name="s_name" value="{{pay.spouse_name}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Address</label>
+                        </div>
+                        <div class="col-6"><textarea class="form-control" name="address">{{pay.address}}</textarea></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Phone Number</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control" name="phone" value="{{pay.Phone}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Email</label>
+                        </div>
+                        <div class="col-6"><input type="email" class="form-control" name="email" value="{{pay.email}}"></div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-6 col-md-6 col-sm-12 pt-3">
+                    {% for bank in b %}
+                    <div class="bank" id="bank">
+                        <h4 class="text-center py-2">Bank information</h4>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Account Number</label>
+                            </div>
+                            <div class="col-6"><input type="number" class="form-control" name="acc_no" value="{{bank.acc_no}}"></div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">IFSC</label>
+                            </div>
+                            <div class="col-6"><input type="text" class="form-control" name="ifsc" value="{{bank.IFSC}}"
+                                    style="text-transform:uppercase"></div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Name of Bank</label>
+                            </div>
+                            <div class="col-6"><input type="text" class="form-control" name="b_name"  value="{{bank.bank_name}}"></div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Branch Name</label>
+                            </div>
+                            <div class="col-6"><input type="text" class="form-control" name="branch"  value="{{bank.branch}}"></div>
+                        </div>
+                        <h5 class="text-center py-1">For Banking</h5>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Transaction Type</label>
+                            </div>
+                            <div class="col-6">
+                                <input type="text" class="form-control" name="ttype"  value="{{bank.transaction_type}}">
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <h4 class="text-center py-2">Statutary information</h4>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Income Tax Number</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control" name="itn" value="{{pay.ITN}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Aadhar Number</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control" name="an" value="{{pay.Aadhar}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Universal Account Number(UAN)</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control" name="uan" value="{{pay.UAN}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">PF Account Number(PFN)</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control" name="pfn" value="{{pay.PFN}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">PR Account Number(PRAN)</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control" name="pran" value="{{pay.PRAN}}"></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">TDS</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control" name="tds" value="{{pay.TDS}}"></div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="action-button">
+                <button class="btn btn-primary" type="submit">Update</button>
+            </div>
+            <div class="text-center">
+                {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" id="alert">
+                    <strong>{{message}}</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </form>
+
+    </div>
+
+
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,502 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+
+<!-- class="row fixed-top " -->
+<!-- style=" position: fixed;" -->
+<style>
+    .dark-select {
+    background-color: #333;
+    color: #fff;
+    width: 200px;
+}
+ /* Modal styles */
+ .modal {
+      display: none; /* Hide the modal by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto; /* 15% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 300px; /* Set the width of the modal */
+    }
+
+    .modal-label {
+      font-weight: bold;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+
+    .modal-buttons {
+      text-align: right;
+      margin-top: 20px;
+    }
+   
+</style>
+<!-- <section > -->
+    <div class="fixed-top" style="top: 7rem; margin-left: 18rem;" >
+     
+          <div style="height: 600px;overflow-y: scroll;">
+             <h3  class="mb-3  text-white " style="font-size: 2rem;">New Project</h3><br>     
+      
+            <form  method="post" action="{% url 'addproj' %}"  enctype="multipart/form-data" class="">
+              {% csrf_token %}
+              
+              
+              <div class=" form-group row">
+                <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+                    <label >Project name*</label>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-6">
+                    <input  type="text" class="form-control bg-dark" name="name" required>     
+                    <div class="invalid-feedback">Please fill out this field.</div>  
+ 
+                </div>
+                
+            </div>
+
+               <div class="form-group row mt-4">
+                   <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Description</label></div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <input type="text" class="form-control bg-dark" name="desc" required>     
+                        <div class="invalid-feedback">Please fill out this field.</div> 
+ 
+                    </div>
+
+
+                </div>
+                <div class="form-group row mt-4">
+                    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+                        <label>Customer Name*</label>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <select name="c_name" id="customer-select" class="form-control bg-dark">
+                            <option value="">Select Customer</option>
+                            {% for d in data %}
+                            <option value="{{d.id}}" data-email="{{ d.customerEmail }}">{{d.customerName}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group row mt-4">
+                    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+                        <label>Email</label>
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <input type="text" id="customer-email" class="form-control bg-dark" >
+                    </div>
+                </div>
+
+                 <div class="form-group row mt-4">
+                    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Billing Method*</label></div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <select name="billing" id="billingMethodSelect" class="form-control bg-dark">
+                            <option value=""></option>
+                            <option value="Fixed cost for project">Fixed cost for project</option>
+                            <option value="Based on project hours">Based on project hours</option>
+                            <option value="Based on staff hours">Based on staff hours</option>
+                            <option value="Based on task hours">Based on task hours</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="inputBoxContainer" style="display: none;">
+                    <div class=" form-group row">
+                        <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
+                            <label >Rate per hour*</label>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <input  type="text" class="form-control bg-dark" name="rateperhour"  id="inputBox" >     
+                                
+         
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="form-group row mt-4">
+                    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Budget Type*</label></div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        <select name="budget" id="budgetMethodSelect" class="form-control bg-dark">
+                            <option value=""></option>
+                            <option value="Total budget cost">Total budget cost</option>
+                            <option value="Total project hours">Total project hours(HH:MM)</option>
+                            <option value="Hours per task">Hours per task</option>
+                            <option value="Hours per staff">Hours per staff</option>
+                        </select>
+                    </div>
+                </div>
+                    <center>
+                    <!--<div class="col-sm-12 col-md-6 col-lg-6">
+                         <input  type="checkbox"  name="w_phone" placeholder="work phone" required>
+                            
+                         <label class="col-sm-12 col-md-6 col-lg-6 ">Add budget for this project.</label>
+                     </div>-->
+                    </center>
+ 
+                    <label for="">Users</label><br>
+    <table class="table text-black " id="tab_logic">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th class="text-right">E-mail</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="items-table-body">
+            <tr id="addr0">
+                <td>
+                    <select name="user_select[]" id="user_select" class="form-control bg-dark">
+                        {% for d in uc %}
+                            <option value="{{d.usernamezz}}" data-email="{{d.emailzz}}">{{d.usernamezz}}</option>
+                        {% endfor %}
+                        
+                    </select>
+
+                </td>
+                <td class="text-right">
+                    <input type="email" class="form-control bg-dark" id="email" name="email[]" >
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-transparent text-danger btn-sm btn-outline-danger rounded-circle delete-row" style="width:30px">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="add-user-row">Add User</button>
+    <button type="button" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="create-user">Create User</button><br><br><br>
+    <label for="">Tasks</label><br>
+    <table class="table text-black" id="task_table">
+        <thead>
+            <tr>
+                <th>Task name</th>
+                <th class="text-right">Description</th>
+                <th class="text-right">Rate per hour</th>
+                <th class="text-center">Actions</th>
+
+            </tr>
+        </thead>
+        <tbody id="items-table-task">
+            <tr id="addt0">
+                <td>
+                    <input type="text" class="form-control bg-dark" id="task1" name="taskname[]">
+                </td>
+                <td class="text-right">
+                    <input type="text" class="form-control bg-dark" id="desc1" name="taskdes[]">
+                </td>
+                <td class="text-right">
+                    <input type="text" class="form-control bg-dark" id="tsk1" name="taskrph[]">
+                </td>
+                <td class="text-center">
+                    <input  type="checkbox" id="billable1" name="billable[]" placeholder="work phone" checked>
+           
+                     <label style="color: gainsboro;">Billable</label>
+                    <button type="button" class="btn btn-transparent text-danger btn-sm btn-outline-danger rounded-circle delete-row" style="width:30px">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="add-task-row">Add Task</button><br><br>
+
+    <!--<div class="col-sm-12 col-md-6 col-lg-6">
+        <input  type="checkbox"  name="w_phone" placeholder="work phone" required>
+           
+        <label class="col-sm-12 col-md-6 col-lg-6 ">Add to the watchlist on my dashboard.</label>
+    </div>-->
+    <button type="submit" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="save-btn">Save</button>
+    <button type="button" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="cancel-btn">Cancel</button>
+    </form>
+<!-- The modal -->
+<form  method="post" action="{% url 'createuser' %}"  enctype="multipart/form-data" class="">
+    {% csrf_token %}
+<div id="myModal" class="modal">
+    <div class="modal-content">
+      <label for="username" class="modal-label">Username:</label>
+      <input type="text" id="username" class="modal-input" name="usernamezz" placeholder="Enter your username">
+
+      <label for="email" class="modal-label">Email:</label>
+      <input type="email" id="email" class="modal-input" name="emailzz" placeholder="Enter your email">
+
+      <div class="modal-buttons">
+        <button type="submit" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="create-btn">Create</button>
+        <button type="button" onclick="document.getElementById('myModal').style.display='none'" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+  </form>
+  <script>
+    var createUserBtn = document.getElementById("create-user");
+    var modal = document.getElementById("myModal");
+
+    createUserBtn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    var cancelBtn = document.getElementById("cancel-btn");
+
+    cancelBtn.onclick = function() {
+      modal.style.display = "none";
+    }
+  </script>
+
+    <script>
+        $(document).on('click', '#user_select', function(){
+            var select = $('#user_select').val();
+            $.ajax({
+                type: "GET",
+                url: "{% url 'itemdata2' %}",
+                data: {
+                    id: select
+                },
+                success: function(response){
+                    console.log(response);
+                    var data = response.email;
+                    $('#email').val(data);
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).on('click', '#user_select1', function(){
+            var select = $('#user_select1').val();
+            $.ajax({
+                type: "GET",
+                url: "{% url 'itemdata2' %}",
+                data: {
+                    id: select
+                },
+                success: function(response){
+                    console.log(response);
+                    var data = response.email;
+                    $('#email1').val(data);
+                }
+            });
+        });
+    </script>
+   <script>
+    $(document).on('click', '#user_select2', function(){
+        var select = $('#user_select2').val();
+        $.ajax({
+            type: "GET",
+            url: "{% url 'itemdata2' %}",
+            data: {
+                id: select
+            },
+            success: function(response){
+                console.log(response);
+                var data = response.email;
+                $('#email2').val(data);
+            }
+        });
+    });
+</script> 
+<script>
+    $(document).on('click', '#user_select3', function(){
+        var select = $('#user_select3').val();
+        $.ajax({
+            type: "GET",
+            url: "{% url 'itemdata2' %}",
+            data: {
+                id: select
+            },
+            success: function(response){
+                console.log(response);
+                var data = response.email;
+                $('#email3').val(data);
+            }
+        });
+    });
+</script> 
+<script>
+    $(document).on('click', '#user_select4', function(){
+        var select = $('#user_select4').val();
+        $.ajax({
+            type: "GET",
+            url: "{% url 'itemdata2' %}",
+            data: {
+                id: select
+            },
+            success: function(response){
+                console.log(response);
+                var data = response.email;
+                $('#email4').val(data);
+            }
+        });
+    });
+</script>  
+    <script>
+        var customerSelect = document.getElementById('customer-select');
+        var customerEmailInput = document.getElementById('customer-email');
+    
+        customerSelect.addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            var email = selectedOption.dataset.email;
+    
+            customerEmailInput.value = email;
+        });
+    </script>
+
+
+
+
+<script>
+ $(document).ready(function(){
+  var roinc = 0;
+  
+  $('#add-task-row').click(function(){
+    roinc++;
+    $('#items-table-task').append(`
+      <tr id="addt0${roinc}">
+        <td>
+          <input type="text" class="form-control bg-dark" id="task1${roinc}" name="taskname[]">
+        </td>
+        <td class="text-right">
+          <input type="text" class="form-control bg-dark" id="desc1${roinc}" name="taskdes[]">
+        </td>
+        <td class="text-right rate-column">
+          <input type="text" class="form-control bg-dark task-rate" id="tsk1${roinc}" name="taskrph[]">
+        </td>
+        <td class="text-center">
+          <input type="checkbox" id="billable1${roinc}" name="billable[]" placeholder="work phone" checked>
+          <label style="color: gainsboro;">Billable</label>
+          <button type="button" class="btn btn-transparent text-danger btn-sm btn-outline-danger rounded-circle delete-row" id="${roinc}" style="width:30px">
+            <i class="fa fa-times"></i>
+          </button>
+        </td>
+      </tr>
+    `);
+    applyHideShowForRateColumn();
+  });
+
+  $('#billingMethodSelect').change(function() {
+    applyHideShowForRateColumn();
+  });
+
+  function applyHideShowForRateColumn() {
+    var selectedMethod = $('#billingMethodSelect').val();
+    if (selectedMethod === "Fixed cost for project" || selectedMethod === "Based on project hours") {
+      $('.rate-column').hide();
+    } else {
+      $('.rate-column').show();
+    }
+  }
+});
+
+  $(document).on('click','.delete-row',function(){
+            var row_id = $(this).attr("id");
+            $('#addt0'+row_id+'').remove();
+        });
+</script>
+
+
+
+<script>
+    $(document).ready(function(){
+    var roinc = 0
+  $('#add-user-row').click(function(){
+    roinc++
+    console.log('hi')
+  $('#items-table-body').append( 
+    `<tr id="addr0${roinc}">
+                <td>
+                    <select name="user_select[]" id="user_select${roinc}" class="form-control bg-dark">
+                        {% for d in uc %}
+                            <option value="{{d.usernamezz}}" data-email="{{d.emailzz}}">{{d.usernamezz}}</option>
+                        {% endfor %}
+                        
+                    </select>
+                </td>
+                <td class="text-right">
+                    <input type="email" class="form-control bg-dark" id="email${roinc}" name="email[]" >
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-transparent text-danger btn-sm btn-outline-danger rounded-circle remove_row" style="width:30px" id="${roinc}">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </td>
+
+               
+</button></td>
+            </tr> `
+  )}       
+  );
+  });
+  $(document).on('click','.remove_row',function(){
+            var row_id = $(this).attr("id");
+            $('#addr0'+row_id+'').remove();
+        });
+  
+    </script>
+   
+    <script>
+        // Wait for the document to be ready
+        $(document).ready(function() {
+            // Handle select change event
+            $('#billingMethodSelect').on('change', function() {
+                var selectedOption = $(this).val();
+                
+                // Check if the selected option requires an input box
+                if (selectedOption === 'Fixed cost for project' || selectedOption === 'Based on project hours') {
+                    $('#inputBoxContainer').hide();
+                    $('#task_table th:nth-child(3), #task_table td:nth-child(3)').hide();
+                } else {
+                    $('#inputBoxContainer').show();
+                    $('#task_table th:nth-child(3), #task_table td:nth-child(3)').show();
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        // Wait for the document to be ready
+        $(document).ready(function() {
+            // Handle select change event
+            $('#billingMethodSelect').on('change', function() {
+                var selectedOption = $(this).val();
+                
+                // Check if the selected option requires an input box
+                if (selectedOption === 'Fixed cost for project' || selectedOption === 'Based on project hours') {
+                    $('#inputBoxContainer').show();
+                } else {
+                    $('#inputBoxContainer').hide();
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+                   
+
+
+
+
+
+
+{% endblock %}

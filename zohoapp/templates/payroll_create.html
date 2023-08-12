@@ -1,0 +1,611 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<style>
+    * {
+
+        font-family: "Gill Sans", sans-serif;
+        color: white;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    input[type="email"],
+    input[type="file"],
+    .gen-info textarea,
+    .gen-info select,
+    .data select,
+    .data option,
+    .gen-info option {
+        /* background-color: rgb(255, 255, 255); */
+        color: rgb(7, 7, 7);
+        border: 1px solid rgb(0, 0, 0);
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="number"]:focus,
+    input[type="email"]:focus,
+    input[type="file"]:focus,
+    .gen-info textarea:focus,
+    .data select:focus,
+    .gen-info select:focus {
+        /* background: transparent; */
+        background-color: #ffffff;
+    }
+
+    .gen-info .left {
+        padding-right: 2rem;
+    }
+
+
+    .action-button {
+        display: flex;
+        align-items: center;
+        /* justify-content: center; */
+    }
+
+    .action-button button {
+        width: 8vw;
+        font-size: 1.2vw;
+        margin: 0.5rem .3rem;
+    }
+
+    label {
+        font-size: 1.2vw;
+    }
+
+    .containerprof {
+
+        position: relative;
+
+    }
+
+    .input-container {
+        position: relative;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .validation-tick {
+        display: none;
+        color: green;
+        position: absolute;
+
+        top: .5rem;
+        left: 80%;
+        font-size: 1rem;
+    }
+</style>
+<section>
+    <div class="containerprof p-5">
+        <div class="header pb-5">
+            <h3>CREATE EMPLOYEE</h3>
+            <hr>
+        </div>
+        <form method="POST" action="{% url 'createpayroll' %}" enctype="multipart/form-data" id="myForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="data col-6 col-lg-6 col-md-6 col-sm-12">
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Title</label>
+                        </div>
+                        <div class=" col-6">
+                            <select class="form-control text-dark" name="title" id="title" required>
+                                <option value=""></option>
+                                <option value="Mr">Mr</option>
+                                <option value="Mrs">Mrs</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">First Name</label>
+                        </div>
+                        <div class="input-container col-6">
+                            <input type="text" class="form-control text-dark" name="fname" id="fname" required>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Last Name</label>
+                        </div>
+                        <div class="input-container col-6">
+                            <input type="text" class="form-control text-dark" name="lname" id="lname" required>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Alias</label>
+                        </div>
+                        <div class="input-container col-6"><input type="text" class="form-control text-dark" name="alias"
+                                id="alias">
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Date of joining</label>
+                        </div>
+                        <div class="input-container col-6">
+                            <input type="date" class="form-control text-dark" name="joindate" id="joindate">
+
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Define salary details</label>
+                        </div>
+                        <div class="col-6">
+                            <select class="form-control text-dark" name="saltype" id="sal" onchange="salFunction()">
+                                <option value="">Select</option>
+                                <option value="Fixed">Fixed</option>
+                                <option value="Variable">Variable</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="fixed" style="display: none;">
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Salary Amount</label>
+                            </div>
+                            <div class="col-6"><input type="number" class="form-control text-dark" name="fsalary" id="fsalary">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="variable" style="display: none;">
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Amount per Hour</label>
+                            </div>
+                            <div class="col-6"><input type="number" class="form-control text-dark" name="amnt" id="amnt"></div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Total working Hours</label>
+                            </div>
+                            <div class="col-6"><input type="number" class="form-control text-dark" name="hours" id="hours"
+                                    onkeyup="calculateAmount()"></div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Salary Amount</label>
+                            </div>
+                            <div class="col-6"><input type="number" class="form-control text-dark" name="vsalary" id="vsalary">
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="image col-6 col-lg-6 col-md-6 col-sm-12">
+
+                    <div class="row">
+                        <div class="col-5 col-lg-5 col-md-10 col-sm-12 text-center">
+                            <label for="">Upload Image</label>
+                        </div>
+                        <div class="col-7 col-lg-7 col-md-10 col-sm-12">
+                            <label for="image-input">
+                                <img class="img-fluid" src="{% static 'images/payrollimg.png' %}" alt="" width="190px"
+                                    height="200px" id="img"
+                                    style="background-color: rgba(156, 156, 156, 0.267); border-radius: 30px;">
+                            </label>
+                            <input id="image-input" type="file" name="file" class="form-control" accept="image/*"
+                                onchange="loadFile(event)" style="display: none;">
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <script>
+                    var loadFile = function (event) {
+                        var reader = new FileReader();
+                        reader.onload = function () {
+                            var output = document.getElementById('img');
+                            output.src = reader.result;
+                        };
+                        reader.readAsDataURL(event.target.files[0]);
+                    };
+
+                </script>
+            </div>
+
+            <div class="gen-info row pt-5">
+                <div class="left col-6 col-lg-6 col-md-6 col-sm-12">
+                    <h4 class="text-center py-2">General information</h4>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Employee Number</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control text-dark" name="empnum" id="empnum"
+                                onkeyup="empValidation(document.getElementById('empnum'),document.getElementById('emperror'))" required>
+                                <div id="emperror" class="text-danger"></div>
+                            </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Designation</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control text-dark" name="designation" required></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Location</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control text-dark" name="location" required></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Gender</label>
+                        </div>
+                        <div class="col-6">
+                            <select class="form-control text-dark" name="gender" id="dropId3" required>
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Transgender">Transgender</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Date of Birth</label>
+                        </div>
+                        <div class="col-6"><input type="date" class="form-control text-dark" name="dob" required></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Blood Group</label>
+                        </div>
+                        <div class="col-6">
+                            <select class="form-control text-dark" id="blood" name="blood" required>
+                                <option value=""></option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Father's Name/Mother's Name</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control text-dark" name="fm_name" required></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Spouse's Name</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control text-dark" name="s_name" ></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Temporary Address</label>
+                        </div>
+                        <div class="col-6"><textarea class="form-control text-dark" name="address" required></textarea></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Permanent Address</label>
+                        </div>
+                        <div class="col-6"><textarea class="form-control text-dark" name="paddress" required></textarea></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Contact Number</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control text-dark" name="phone" id="phone" required
+                                onkeyup="phoneValidate(document.getElementById('phone'),document.getElementById('pherror'))">
+                            <div id="pherror" class="text-danger"></div>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Emergency Contact Number</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control text-dark" name="ephone" id="ephone" 
+                                onkeyup="phoneValidate(document.getElementById('ephone'),document.getElementById('epherror'))">
+                            <div id="epherror" class="text-danger"></div>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Email</label>
+                        </div>
+                        <div class="col-6"><input type="email" class="form-control text-dark" name="email" id="email" required
+                                onkeyup="emailvalidate()">
+                            <div id="error" class="text-danger"></div>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Attachments</label>
+                        </div>
+                        <div class="col-6">
+                            <input class="form-control" id="file-upload" type="file" name="attach" style="background: transparent;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-6 col-md-6 col-sm-12 pt-3">
+                    <div class="row pb-4">
+                        <div class="col-6">
+                            <label for="">Provide Bank Details</label>
+                        </div>
+                        <div class="col-6"><select class="form-control text-dark" name="bank" id="dropId" onchange="bankdisplay()"
+                                required>
+                                <option value=""></option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bank" id="bank" style="display: none;">
+                        <h4 class="text-center py-2">Bank information</h4>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Account Number</label>
+                            </div>
+                            <div class="col-6"><input type="number" class="form-control text-dark" name="acc_no" id="acc_no"
+                                    pattern="[0-9]{15}"></div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">IFSC</label>
+                            </div>
+                            <div class="col-6"><input type="text" class="form-control text-dark" name="ifsc" id="ifsc">
+                            </div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Name of Bank</label>
+                            </div>
+                            <div class="col-6"><input type="text" class="form-control text-dark" name="b_name" id="b_name"></div>
+                        </div>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Branch Name</label>
+                            </div>
+                            <div class="col-6"><input type="text" class="form-control text-dark" name="branch" id="branch"></div>
+                        </div>
+                        <h5 class="text-center py-1">For Banking</h5>
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Transaction Type</label>
+                            </div>
+                            <div class="col-6">
+                                <select class="form-control text-dark" name="ttype" id="ttype">
+                                    <option value=""></option>
+                                    <option value="ATM">ATM</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Check">Check</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">TDS Applicable</label>
+                        </div>
+                        <div class="col-6">
+                            <select class="form-control text-dark" name="tds" id="tds" onchange="tdsFunction()" required>
+                                <option value=""></option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="tds-div" style="display: none;">
+                        <div class="row pb-3">
+                            <div class="col-6">
+                                <label for="">Percentage/Amount</label>
+                            </div>
+                            <div class="col-6">
+                                <select class="form-control text-dark" name="pora" id="pora" onchange="tdsFunction2()">
+                                    <option value=""></option>
+                                    <option value="Percentage">Percentage</option>
+                                    <option value="Amount">Amount</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="p" style="display: none;">
+                            <div class="row pb-3">
+                                <div class="col-6">
+                                    <label for="">Percentage</label>
+                                </div>
+                                <div class="col-6"><input type="number" class="form-control text-dark" name="pcnt" id="pcnt">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="a" style="display: none;">
+                            <div class="row pb-3">
+                                <div class="col-6">
+                                    <label for="">Amount</label>
+                                </div>
+                                <div class="col-6"><input type="number" class="form-control text-dark" name="amnt" id="amnt">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="text-center py-2">Statutary information</h4>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Income Tax Number</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control text-dark" name="itn" ></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Aadhar Number</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control text-dark" name="an" pattern="[0-9]{12}"
+                                required></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">Universal Account Number(UAN)</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control text-dark" name="uan" ></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">PF Account Number(PFN)</label>
+                        </div>
+                        <div class="col-6"><input type="number" class="form-control text-dark" name="pfn" ></div>
+                    </div>
+                    <div class="row pb-3">
+                        <div class="col-6">
+                            <label for="">PR Account Number(PRAN)</label>
+                        </div>
+                        <div class="col-6"><input type="text" class="form-control text-dark" name="pran" ></div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="action-button">
+                <button class="btn btn-primary" type="submit">Add</button>
+                <button class="btn btn-danger" type="reset">Cancel</button>
+            </div>
+            <div class="text-center">
+                {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert" id="alert">
+                    <strong>{{message}}</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </form>
+
+    </div>
+
+
+
+</section>
+
+<script>
+    // var loadAttachment = function (event) {
+    //                     var reader = new FileReader();
+    //                     reader.onload = function () {
+    //                         var output = document.getElementById('img2');
+    //                         output.innerHTML = reader.result.trim;
+    //                     };
+    //                     reader.readAsDataURL(event.target.files[0]);
+    //                 };
+    function bankdisplay() {
+        var e = document.getElementById("dropId").value;
+
+        if (e == 0) {
+            document.getElementById("bank").style.display = 'none'
+
+        }
+        else {
+            document.getElementById("bank").style.display = 'block'
+        }
+
+    }
+    function salFunction() {
+        var e = document.getElementById("sal");
+        var sal = e.value;
+        if (sal == 'Fixed') {
+            document.getElementById("fixed").style.display = 'block'
+            document.getElementById("variable").style.display = 'none'
+        }
+        else if (sal == 'Variable') {
+            document.getElementById("variable").style.display = 'block'
+            document.getElementById("fixed").style.display = 'none'
+        }
+
+    }
+    function calculateAmount(val) {
+        var a = document.getElementById("amnt").value;
+        var h = document.getElementById("hours").value;
+        var tot = h * a;
+        document.getElementById('vsalary').value = tot;
+
+    }
+
+    function tdsFunction() {
+        var e = document.getElementById("tds");
+        var sal = e.value;
+        if (sal == '1') {
+            document.getElementById("tds-div").style.display = 'block'
+        }
+        else {
+            document.getElementById("tds-div").style.display = 'none'
+        }
+
+    }
+    function tdsFunction2() {
+        var e = document.getElementById("pora");
+        var sal = e.value;
+        if (sal == 'Percentage') {
+            document.getElementById("p").style.display = 'block';
+            document.getElementById("a").style.display = 'none';
+        }
+        else if (sal == 'Amount') {
+            document.getElementById("a").style.display = 'block';
+            document.getElementById("p").style.display = 'none'
+        }
+    }
+    function emailvalidate() {
+        var email = document.getElementById('email')
+        var error = document.getElementById('error')
+        if (!email.value.match(/^[A-Za-z\._\-0-9]*[@][A-Za-z]*[\.][a-z]{2,4}$/)) {
+            error.style.fontSize = ".8rem"
+            error.innerHTML = "*Please enter a valid email"
+            return false;
+
+        }
+        error.innerHTML = ""
+        return true;
+    }
+    function phoneValidate(phn, pherror) {
+        if (!phn.value.match(/^[7-9]\d{9}$/)) {
+            pherror.style.display="block"
+            pherror.style.fontSize = ".8rem"
+            pherror.innerHTML = "*Please enter a valid phone number"
+            return false;
+        }
+        pherror.style.display="none"
+        pherror.innerHTML = ""
+        return true;
+    }
+    function empValidation(emp, emperror) {
+        emp.addEventListener("input", function () {
+            emp.value = emp.value.toUpperCase();
+        });
+        if (!emp.value.match(/^[A-Z0-9]{6}$/)) {
+            emperror.style.fontSize = ".8rem"
+            emperror.innerHTML = "*Must have 6 characters"
+            return false;
+        }
+        emperror.innerHTML = ""
+        return true;
+    }
+    inputvalue=document.getElementById('ifsc')
+    inputvalue.addEventListener("input", function () {
+        inputvalue.value = inputvalue.value.toUpperCase();
+        });
+        const inputFields = document.querySelectorAll("input[type='text']");
+
+        inputFields.forEach(function(input) {
+            input.addEventListener("input", function() {
+                const inputValue = input.value;
+                input.value = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+            });
+        });
+</script>
+{% endblock %}
