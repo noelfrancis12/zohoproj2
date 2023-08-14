@@ -7009,3 +7009,90 @@ def delete_payrollcomment(request,cid):
 
 def ewaylistout(request):
      return render(request,'ewaylistout.html')
+def ewaycreate(request):
+     user_id=request.user.id
+     udata=User.objects.get(id=user_id)
+     data=customer.objects.all()
+     payments=payment_terms.objects.all()
+     return render(request,'ewaycreate.html',{'data':data,'payments':payments})
+def ewayb_customer(request):
+    
+    company = company_details.objects.get(user = request.user)
+
+    if request.method=='POST':
+
+        # title=request.POST.get('title')
+        # first_name=request.POST.get('firstname')
+        # last_name=request.POST.get('lastname')
+        # comp=request.POST.get('company_name')
+        cust_type = request.POST.get('customer_type')
+        name = request.POST.get('display_name')
+        comp_name = request.POST.get('company_name')
+        email=request.POST.get('email')
+        website=request.POST.get('website')
+        w_mobile=request.POST.get('work_mobile')
+        p_mobile=request.POST.get('pers_mobile')
+        fb = request.POST.get('facebook')
+        twitter = request.POST.get('twitter')
+        skype = request.POST.get('skype')
+        desg = request.POST.get('desg')
+        dpt = request.POST.get('dpt')
+        gsttype=request.POST.get('gsttype')
+        # gstin=request.POST.get('gstin')
+        # panno=request.POST.get('panno')
+        supply=request.POST.get('placeofsupply')
+        tax = request.POST.get('tax_preference')
+        currency=request.POST.get('currency')
+        balance=request.POST.get('openingbalance')
+        payment=request.POST.get('paymentterms')
+        street1=request.POST.get('street1')
+        street2=request.POST.get('street2')
+        city=request.POST.get('city')
+        state=request.POST.get('state')
+        pincode=request.POST.get('pincode')
+        country=request.POST.get('country')
+        fax=request.POST.get('fax')
+        phone=request.POST.get('phone')
+        # shipstreet1=request.POST.get('shipstreet1')
+        # shipstreet2=request.POST.get('shipstreet2')
+        # shipcity=request.POST.get('shipcity')
+        # shipstate=request.POST.get('shipstate')
+        # shippincode=request.POST.get('shippincode')
+        # shipcountry=request.POST.get('shipcountry')
+        # shipfax=request.POST.get('shipfax')
+        # shipphone=request.POST.get('shipphone')
+
+        u = User.objects.get(id = request.user.id)
+
+        cust = customer(customerName = name,customerType = cust_type, companyName= comp_name, GSTTreatment=gsttype, 
+                        customerWorkPhone = w_mobile,customerMobile = p_mobile, customerEmail=email,skype = skype,Facebook = fb, 
+                        Twitter = twitter,placeofsupply=supply,Taxpreference = tax,currency=currency, website=website, 
+                        designation = desg, department = dpt,OpeningBalance=balance,Address1=street1,Address2=street2, city=city, 
+                        state=state, PaymentTerms=payment,zipcode=pincode,country=country,  fax = fax,  phone1 = phone,user = u)
+        cust.save()
+
+        return HttpResponse({"message": "success"})
+
+
+@login_required(login_url='login')
+def customer_dropdown_ewayb(request):
+    user = User.objects.get(id=request.user.id)
+
+    options = {}
+    option_objects = customer.objects.filter(user = user)
+    for option in option_objects:
+        options[option.id] = [option.id , option.customerName]
+
+    return JsonResponse(options) 
+def recurbills_pay_eway(request):
+    if request.method == 'POST':
+        # Extract the data from the POST request
+        name = request.POST.get('name')
+        days = request.POST.get('days')
+
+        # Create a new payment_terms object and save it to the database
+        payment_term = payment_terms(Terms=name, Days=days)
+        payment_term.save()
+
+        # Return a JSON response indicating success
+        return JsonResponse({"message": "success"})

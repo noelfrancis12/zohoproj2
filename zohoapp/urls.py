@@ -335,7 +335,11 @@ urlpatterns = [
     path('add_payrollcomment/<int:pid>',views.add_payrollcomment,name='add_payrollcomment'),
     path('delete_payrollcomment/<int:cid>',views.delete_payrollcomment,name='delete_payrollcomment'),
     path('ewaylistout',views.ewaylistout,name='ewaylistout'),
-    
+    path('ewaycreate',views.ewaycreate,name='ewaycreate'),
+    path('recurbills_pay_eway',views.recurbills_pay_eway,name='recurbills_pay_eway'),
+    path('ewayb_customer',views.ewayb_customer,name='ewayb_customer'),
+    path('customer_dropdown_ewayb',views.customer_dropdown_ewayb,name='customer_dropdown_ewayb'),
+
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     
     

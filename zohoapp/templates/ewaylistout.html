@@ -68,14 +68,14 @@
 <div class="fixed-top" style="top: 7rem; margin-left: 18rem;">
     <div style="height: 600px;overflow-y: scroll;">
       <div class="row">
-        <div class="col-md-3"><a class="text-white" style="font-size: 2rem;">All Projects</a>
+        <div class="col-md-3"><a class="text-white" style="font-size: 2rem;">E-way Bills</a>
               
              
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-md-3">
-          <input type="text" id="vendorSearchInput" class="form-control bg-light text-dark" placeholder="Search Projects...">
+          <input type="text" id="vendorSearchInput" class="form-control bg-light text-dark" placeholder="Search e-way bills...">
         </div>
         
         <div class="col-md-6 form-inline" style="margin-left: 56rem; margin-top: -2rem;">
@@ -88,7 +88,7 @@
                             <a class="dropdown-item" href="#" style="color:rgb(218, 164, 48) ;" id="sortProject">Project</a>
 
                         </div>&nbsp;&nbsp;&nbsp;
-                        <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="btn btn-warning mr-2" href="{% url 'proj' %}">
+                        <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="btn btn-warning mr-2" href="{% url 'ewaycreate' %}">
                            New
                         </a>
         </div>
@@ -100,13 +100,13 @@
               <table class="table text-white" id="vendorTable">
                 <thead>
                   <tr>
+                    <th>DATE</th>
+                    <th>TRANSACTION#</th>
                     <th>CUSTOMER NAME</th>
-                    <th>CUSTOMER EMAIL</th>
-                    <th>PROJECT NAME</th>
-                    <th>BILLING METHOD</th>
-                    <th>DESCRIPTION</th>
-                    <th>RATE</th>
-                    <th>STATUS</th>
+                    <th>CUSTOMER E-MAIL</th>
+                    <th>CUSTOMER GSTIN</th>
+                    <th>TOTAL</th>
+                   
                   </tr>
                 </thead>
                 <tbody>
@@ -120,18 +120,7 @@
                     </td>
                     <td>{{v.billing}}</td>
                     <td><span class="description-icon" title="{{v.desc}}">&#9432;</span></td>
-                    <td>
-                      {% if v.billing == "Fixed cost for project" or v.billing == "Based on project hours" %}
-                        {{v.rateperhour}} {{v.taskrph}}
-                      {% else %}
-                        Per hour
-                      {% endif %}
-                    </td>
-                    <td>
-                      <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="toggleButton btn btn-warning mr-2" href="#" id="actselect" data-project-id="{{ v.id }}">{{ v.active|yesno:"Active,Inactive" }}</a>
-                      
-                      
-                    </td>
+                    
                   </tr>
                   {% endfor %}
                 </tbody>
