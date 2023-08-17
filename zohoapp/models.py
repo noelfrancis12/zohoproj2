@@ -735,3 +735,8 @@ class Commentmodel(models.Model):
 class Payrollfiles(models.Model):
     attachment=models.FileField(upload_to='doc/',null=True)
     payroll=models.ForeignKey(Payroll,on_delete=models.CASCADE)
+class Transportation(models.Model):
+    method = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.method   

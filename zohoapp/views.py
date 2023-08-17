@@ -7014,7 +7014,8 @@ def ewaycreate(request):
      udata=User.objects.get(id=user_id)
      data=customer.objects.all()
      payments=payment_terms.objects.all()
-     return render(request,'ewaycreate.html',{'data':data,'payments':payments})
+     trans=Transportation.objects.all()
+     return render(request,'ewaycreate.html',{'data':data,'payments':payments,'trans':trans})
 def ewayb_customer(request):
     
     company = company_details.objects.get(user = request.user)
@@ -7096,3 +7097,62 @@ def recurbills_pay_eway(request):
 
         # Return a JSON response indicating success
         return JsonResponse({"message": "success"})
+def add_transportation(request):
+    if request.method == 'POST':
+        transportation_method = request.POST.get('method')
+        if transportation_method:
+            transportation = Transportation(method=transportation_method)
+            transportation.save()
+            return JsonResponse({'message': 'Transportation added successfully.'})
+        else:
+            return JsonResponse({'message': 'Transportation method is required.'}, status=400)
+    else:
+        return JsonResponse({'message': 'Invalid request method.'}, status=405) 
+def ewaybills_item(request):
+
+    company = company_details.objects.get(user = request.user)
+
+    if request.method=='POST':
+        
+        type=request.POST.get('type')
+        name=request.POST.get('name')
+        ut=request.POST.get('unit')
+        inter=request.POST.get('inter')
+        intra=request.POST.get('intra')
+        sell_price=request.POST.get('sell_price')
+        sell_acc=request.POST.get('sell_acc')
+        sell_desc=request.POST.get('sell_desc')
+        cost_price=request.POST.get('cost_price')
+        cost_acc=request.POST.get('cost_acc')      
+        cost_desc=request.POST.get('cost_desc')
+        
+        units=Unit.objects.get(id=ut)
+        sel=Sales.objects.get(id=sell_acc)
+        cost=Purchase.objects.get(id=cost_acc)
+
+        history="Created by " + str(request.user)
+
+        u  = User.objects.get(id = request.user.id)
+
+        item=AddItem(type=type,Name=name,p_desc=cost_desc,s_desc=sell_desc,s_price=sell_price,p_price=cost_price,
+                     user=u ,creat=history,interstate=inter,intrastate=intra,unit = units,sales = sel, purchase = cost)
+
+        item.save()
+
+        return HttpResponse({"message": "success"})
+    
+    return HttpResponse("Invalid request method.")
+
+        
+@login_required(login_url='login')
+def eway_item_dropdown(request):
+
+    user = User.objects.get(id=request.user.id)
+
+    options = {}
+    option_objects = AddItem.objects.filter(user = request.user)
+    for option in option_objects:
+        options[option.id] = [option.Name,option.id]
+
+    return JsonResponse(options)
+    

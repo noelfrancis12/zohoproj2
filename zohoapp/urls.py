@@ -339,6 +339,9 @@ urlpatterns = [
     path('recurbills_pay_eway',views.recurbills_pay_eway,name='recurbills_pay_eway'),
     path('ewayb_customer',views.ewayb_customer,name='ewayb_customer'),
     path('customer_dropdown_ewayb',views.customer_dropdown_ewayb,name='customer_dropdown_ewayb'),
+    path('add-transportation/', views.add_transportation, name='add_transportation'),
+    path('ewaybills_item',views.ewaybills_item,name='ewaybills_item'),
+    path('eway_item_dropdown',views.eway_item_dropdown ,name = 'eway_item_dropdown'),
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     
