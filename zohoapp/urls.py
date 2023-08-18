@@ -342,6 +342,10 @@ urlpatterns = [
     path('add-transportation/', views.add_transportation, name='add_transportation'),
     path('ewaybills_item',views.ewaybills_item,name='ewaybills_item'),
     path('eway_item_dropdown',views.eway_item_dropdown ,name = 'eway_item_dropdown'),
+    path('eway_unit',views.eway_unit,name='eway_unit'),
+    path('eway_unit_dropdown',views.eway_unit_dropdown,name = 'eway_unit_dropdown'),
+    path('unit_get_rate',views.unit_get_rate ,name = 'unit_get_rate'),
+
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     

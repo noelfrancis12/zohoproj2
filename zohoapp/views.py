@@ -7015,7 +7015,13 @@ def ewaycreate(request):
      data=customer.objects.all()
      payments=payment_terms.objects.all()
      trans=Transportation.objects.all()
-     return render(request,'ewaycreate.html',{'data':data,'payments':payments,'trans':trans})
+     units = Unit.objects.all()
+     sales=Sales.objects.all()
+     purchase=Purchase.objects.all()
+     sales_type = set(Sales.objects.values_list('Account_type', flat=True))
+     purchase_type = set(Purchase.objects.values_list('Account_type', flat=True))
+     item = AddItem.objects.filter(user = request.user)
+     return render(request,'ewaycreate.html',{'data':data,'payments':payments,'trans':trans,'units':units,'sales':sales,'purchase':purchase,'sales_type':sales_type,'purchase_type':purchase_type,'item':item})
 def ewayb_customer(request):
     
     company = company_details.objects.get(user = request.user)
@@ -7155,4 +7161,40 @@ def eway_item_dropdown(request):
         options[option.id] = [option.Name,option.id]
 
     return JsonResponse(options)
+def eway_unit(request):
     
+    company = company_details.objects.get(user = request.user)
+
+    if request.method=='POST':
+
+        unit =request.POST.get('unit')
+        
+        u = User.objects.get(id = request.user.id)
+
+        unit = Unit(unit= unit)
+        unit.save()
+
+        return HttpResponse({"message": "success"})
+        
+@login_required(login_url='login')
+def eway_unit_dropdown(request):
+
+    user = User.objects.get(id=request.user.id)
+
+    options = {}
+    option_objects = Unit.objects.all()
+    for option in option_objects:
+        options[option.id] = [option.unit,option.id]
+
+    return JsonResponse(options)
+def unit_get_rate(request):
+
+    user = User.objects.get(id=request.user.id)
+    if request.method=='POST':
+        id=request.POST.get('id')
+
+        item = AddItem.objects.get( id = id, user = user)
+         
+        rate = 0 if item.s_price == "" else item.s_price
+
+        return JsonResponse({"rate": rate},safe=False)  
