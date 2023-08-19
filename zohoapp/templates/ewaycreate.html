@@ -304,9 +304,8 @@
                     <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
                         <label>Place of supply*</label></div>
                     <div class="col-sm-12 col-md-6 col-lg-6" >
-                      <select name="srcofsupply" id="srcofsupply" class="form-control text-dark bg-light">
-                        <option value=" " disabled selected>Select Source of Supply</option>
-                        <option value="[AN] Andaman and Nicobar Islads">[AN] Andaman and Nicobar Islands</option>
+                      <select name="srcofsupply" id="srcofsupply" onclick="toggleDateInput()" onselect="calculateTaxAmount()" class="form-control bg-light text-dark">
+                        <option value="[AN] Andaman and Nicobar Islads">[AN] Andaman and Nicobar Islads</option>
                         <option value="[AD] Andhra Predhesh">[AD] Andhra Predhesh</option>
                         <option value="[AR] Arunachal Predesh">[AR] Arunachal Predesh</option>
                         <option value="[AS] Assam">[AS] Assam</option>
@@ -323,7 +322,7 @@
                         <option value="[JK] Jammu and Kashmir">[JK] Jammu and Kashmir</option>
                         <option value="[JH] Jharkhand">[JH] Jharkhand</option>
                         <option value="[KA] Karnataka">[KA] Karnataka</option>
-                        <option value="[KL] Kerala">[KL] Kerala</option>
+                        <option selected="selected" value="[KL] Kerala">[KL] Kerala</option>
                         <option value="[LA] Ladakh">[LA] Ladakh</option>
                         <option value="[LD] Lakshadweep">[LD] Lakshadweep</option>
                         <option value="[MP] Madhya Predesh">[MP] Madhya Predesh</option>
