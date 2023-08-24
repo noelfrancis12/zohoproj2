@@ -113,14 +113,14 @@
                   {% for v in proj %}
                   <tr id="over">
                     <!--<td onclick="location.href ='{% url 'detail' v.id %}' " > {{v.name}}</td> -->
-                    <td><a href="#" class="text-light">  {{v.c_name.customerName}} </a> </td>
-                    <td>{{v.c_name.customerEmail}}</td>
-                    <td>
-                      <a href="#" class="text-light">{{v.name}}</a>
-                    </td>
-                    <td>{{v.billing}}</td>
-                    <td><span class="description-icon" title="{{v.desc}}">&#9432;</span></td>
-                    
+                    <td>{{v.date}}</td>  
+                    <td>{{v.invoiceno}}</td>
+                   
+                    <td> {{v.customer}} </td>
+                    <td>{{v.cemail}}</td>
+                    <td>{{v.cgstin_inp}}</td>
+                   
+                    <td>{{v.grand_total}}</td>
                   </tr>
                   {% endfor %}
                 </tbody>

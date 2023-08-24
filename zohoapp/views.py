@@ -7008,7 +7008,9 @@ def delete_payrollcomment(request,cid):
         return redirect('payroll_view', p.id)
 
 def ewaylistout(request):
-     return render(request,'ewaylistout.html')
+     proj=EWayBill.objects.filter(user=request.user)
+     custom=customer.objects.all()
+     return render(request,'ewaylistout.html',{'proj':proj,'custom':custom})
 def ewaycreate(request):
      user_id=request.user.id
      udata=User.objects.get(id=user_id)
@@ -7198,3 +7200,85 @@ def unit_get_rate(request):
         rate = 0 if item.s_price == "" else item.s_price
 
         return JsonResponse({"rate": rate},safe=False)  
+def create_ewaybillz(request):
+    
+    
+    if request.method == 'POST':
+        user_id=request.user.id
+        user=User.objects.get(id=user_id)
+        doc = request.POST.get('doc')
+        transsub = request.POST.get('transsub')
+        customer = request.POST.get('customer')
+        cemail= request.POST.get('cemail')
+        cgst_trt_inp = request.POST.get('cgst_trt_inp')
+        cgstin_inp = request.POST.get('cgstin_inp')
+        invoiceno = request.POST.get('invoiceno')
+        date = request.POST.get('date')
+        trans = request.POST.get('trans')
+        adda = request.POST.get('adda')
+        addb = request.POST.get('addb')
+        srcofsupply = request.POST.get('srcofsupply')
+        transportation = request.POST.get('transportation')
+        km = request.POST.get('km')
+        vno = request.POST.get('vno')
+
+        sub_total =request.POST['subtotal']
+        sgst=request.POST['sgst']
+        cgst=request.POST['cgst']
+        igst=request.POST['igst']
+        tax = request.POST['total_taxamount']
+        shipping_charge= request.POST['shipping_charge']
+        adj= request.POST['adj']
+        grand_total=request.POST['grandtotal']
+        note=request.POST['note']
+        eway_bill = EWayBill.objects.create(
+            
+            doc=doc,
+            transsub=transsub,
+            customer=customer,
+            cemail=cemail,
+            cgst_trt_inp=cgst_trt_inp,
+            cgstin_inp=cgstin_inp,
+            invoiceno=invoiceno,
+            date=date,
+            trans=trans,
+            adda=adda,
+            addb=addb,
+            srcofsupply=srcofsupply,
+            transportation=transportation,
+            km=km,
+            vno=vno,
+            note=note,
+            grand_total=grand_total,
+            adj=adj,
+            shipping_charge=shipping_charge,
+            tax=tax,
+            igst=igst,
+            cgst=cgst,
+            sgst=sgst,
+            sub_total=sub_total,
+            user=user,
+        )
+
+        items = request.POST.getlist("item[]")
+        quantities = request.POST.getlist("quantity[]")
+        rates = request.POST.getlist("rate[]")
+        taxes = request.POST.getlist("tax[]")
+        discounts = request.POST.getlist("discount[]")
+        amounts = request.POST.getlist("amount[]")
+        
+        if len(items) == len(quantities) == len(rates) == len(discounts) == len(taxes) == len(amounts):
+            for i in range(len(items)):
+                EWayBillItem.objects.create(
+                    eway_bill=eway_bill,
+                    item=items[i],
+                    quantity=quantities[i],
+                    rate=rates[i],
+                    tax=taxes[i],
+                    discount=discounts[i],
+                    amount=amounts[i],
+                )
+
+            return redirect('ewaylistout')
+    
+    return render(request, 'ewaycreate.html')

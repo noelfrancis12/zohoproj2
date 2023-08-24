@@ -8,6 +8,19 @@
 <!-- style=" position: fixed;" -->
 <style>
  /* Modal styles */
+ .modal{
+    z-index: 9999;
+    overflow: scroll;
+  }
+  .modal-backdrop {
+    display: none;
+    z-index: 1040 !important;
+}
+
+.modal-content {
+    margin: 2px auto;
+    z-index: 1100 !important;
+}
  .modal1 {
       display: none; /* Hide the modal by default */
       position: fixed; /* Stay in place */
@@ -183,10 +196,7 @@
       background: #555; 
     }
 
-    .modal{
-      z-index: 9999;
-      overflow: scroll;
-    }
+   
     .item{
       height: auto;
     }
@@ -197,7 +207,7 @@
           <div style="height: 600px;overflow-y: scroll;">
              <h3  class="mb-3  text-white " style="font-size: 2rem;">New E-way Bill</h3><br>     
       
-            <form  method="post" action="{% url 'addproj' %}"  enctype="multipart/form-data" class="">
+            <form  method="post" action="{% url 'create_ewaybillz' %}"  enctype="multipart/form-data" class="">
               {% csrf_token %}
               
               
@@ -206,11 +216,11 @@
                     <label >Document Type*</label>
                 </div>
                 <div class="col-sm-12 col-md-6 col-lg-6">
-                    <select name="" id="" class="form-control bg-light text-dark">
+                    <select name="doc" id="" class="form-control bg-light text-dark">
                         <option value="" hidden selected></option>
-                        <option value="">Invoices</option>
-                        <option value="">Credit Notes</option>
-                        <option value="">Delivery Challans</option>
+                        <option value="Invoices">Invoices</option>
+                        <option value="Credit Notes">Credit Notes</option>
+                        <option value="Delivery Challans">Delivery Challans</option>
                     </select>
  
                 </div>
@@ -222,53 +232,69 @@
                     <label >Transaction Sub Type*</label>
                 </div>
                 <div class="col-sm-12 col-md-6 col-lg-6">
-                    <select name="" id="" class="form-control bg-light text-dark">
+                    <select name="transsub" id="" class="form-control bg-light text-dark">
                         <option value="" hidden selected></option>
-                        <option value="">Supply</option>
-                        <option value="">Export</option>
-                        <option value="">SKD/CKD</option>
+                        <option value="Supply">Supply</option>
+                        <option value="Export">Export</option>
+                        <option value="SKD/CKD">SKD/CKD</option>
                     </select>
  
                 </div>
                 
             </div>
-            <div class="form-group row mt-4">
-                <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
-                    <label>Customer Name*</label>
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-6 d-flex align-items-center"> <!-- Add the "d-flex" and "align-items-center" classes -->
-                    <select name="c_name" id="customer" class="form-control bg-light text-dark">
-                        <option value="">Select Customer</option>
-                        {% for d in data %}
-                        <option value="{{d.id}}" data-email="{{ d.customerEmail }}">{{d.customerName}}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="button" class="btn btn-sm text-white" style="background-color: rgb(210, 132, 30);" id="create-cus">+</button><br><br><br>
-                      
-                </div>
-            </div>
-                
-                <div class="form-group row mt-4">
-                    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
-                        <label>Email</label>
-                    </div>
-                    <div class="col-sm-12 col-md-6 col-lg-6">
-                        <input type="text" id="customer-email" class="form-control bg-light text-dark" >
-                    </div>
-                </div>
+             <div class="row mt-2">
+        <div class="col-md-3">
+          <label >Customer Name *</label><br>
+        </div>
+        <div class="col-md-6">
+          <select name="customer" id="customer" class="form-control text-dark bg-light" >
+            <option value=""></option>
+            {% for c in data %}
+            <option value="{{c.id}} {{c.customerName}}">{{ c.customerName }}</option>
+            {% endfor %}
+          </select>
+          <a href="" data-toggle="modal" data-target="#newcustomer">+ Add New Customer</a>
+          <input type="hidden" id="cust_state" value="" readonly >
+
+          <input type="hidden" id="company_state" value="{{company.state}}" readonly>
+
+        </div>
+      </div>
+
+      <div class="row mt-2 d-none" id="cemail_row">
+        <div class="col-md-3">
+          <label for="cemail_inp">Customer Email</label>
+        </div>
+        <div class="col-md-6">
+          <input type="email" class="form-control text-dark bg-light"  id="cemail_inp" name="cemail"  >
+        </div>
+      </div>
+
+      <div class="row mt-2 d-none" id="cgst_trt_row">
+        <div class="col-md-3">
+          <label for="gst_trt_inp">GST Treatment</label>
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control text-dark bg-light" id="cgst_trt_inp" name="cgst_trt_inp"  >
+        </div>
+      </div>
+
+      <div class="row mt-2 mb-2 d-none" id="cgstin_row">
+        <div class="col-md-3">
+          <label for="gstin_inp">GST Number</label>
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control text-dark bg-light"  id="cgstin_inp" name="cgstin_inp" >
+        </div>
+      </div>
+
 
                 <div class="form-group row mt-4">
                     <div class="col-sm-12 col-md-3 col-lg-3 col-form-label">
                         <label>Invoice#*</label>
                     </div>
                     <div class="col-sm-12 col-md-3 col-lg-3">
-                        <select name="invoice" id="invoice" class="form-control bg-light text-dark">
-                            <option value="" hidden selected></option>
-                            <option value="Fixed cost for project">Fixed cost for project</option>
-                            <option value="Based on project hours">Based on project hours</option>
-                            <option value="Based on staff hours">Based on staff hours</option>
-                            <option value="Based on task hours">Based on task hours</option>
-                        </select>
+                        <input type="text" class="form-control text-dark bg-light" id="invoiceno" name="invoiceno">
                     </div>
                     <div class="col-sm-12 col-md-1 col-lg-1 col-form-label">
                         <label>Date</label>
@@ -283,21 +309,21 @@
                     <div class="col-sm-12 col-md-6 col-lg-6">
                         <select name="trans" id="transaction" class="form-control bg-light text-dark">
                             <option value="" hidden selected></option>
-                            <option value="Fixed cost for project">Goods</option>
-                            <option value="Based on project hours">Services</option>
+                            <option value="Goods">Goods</option>
+                            <option value="Services">Services</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group row mt-4">
                     <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Address Details</label></div>
                     <div class="col-sm-12 col-md-6 col-lg-6">
-                        <input  type="text" class="form-control bg-light text-dark" name="name" >
+                        <input  type="text" class="form-control bg-light text-dark" name="adda" >
                     </div>
                 </div>
                 <div class="form-group row mt-4">
                     <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Address Details 2</label></div>
                     <div class="col-sm-12 col-md-6 col-lg-6">
-                        <input  type="text" class="form-control bg-light text-dark" name="name" >
+                        <input  type="text" class="form-control bg-light text-dark" name="addb" >
                     </div>
                 </div>
                 <div class="form-group row mt-4">
@@ -365,7 +391,7 @@
                 <div class="form-group row mt-4">
                     <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Kilometer</label></div>
                     <div class="col-sm-12 col-md-6 col-lg-6">
-                        <input  type="text" class="form-control bg-light text-dark" name="name" >     
+                        <input  type="text" class="form-control bg-light text-dark" name="km" >     
                          
      
                     </div>
@@ -374,7 +400,7 @@
                 <div class="form-group row mt-4">
                     <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Vehicle Number</label></div>
                     <div class="col-sm-12 col-md-6 col-lg-6">
-                        <input  type="text" class="form-control bg-light text-dark" name="name" >     
+                        <input  type="text" class="form-control bg-light text-dark" name="vno" >     
                         
      
                     </div>
@@ -1660,7 +1686,7 @@
           
               <!-- item modal -->
           
-              <div class="modal fade" id="newitem">
+              <div class="modal fade" id="newitem" >
                 <div class="modal-dialog modal-xl">
                   <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
                     <div class="modal-header " style="background: rgb(32, 35, 37);">
@@ -4576,6 +4602,65 @@
                 });
             });
         });
+    </script>
+    <script>
+      $(document).ready(function() {
+    $('#customer').change(function() {
+
+        var name = $("#customer").val();
+        var na = name.split(' ')[0];
+        $.ajax({
+
+            url: "{% url 'get_customerdet' %}", 
+
+            data: { 
+                    // name : na[1]+ " " + na[2] + " "+ na[3],
+                    id : na,
+                    csrfmiddlewaretoken: '{{ csrf_token }}' 
+                },
+
+            type : 'POST',
+
+            success: function(data) {
+
+              $("#cemail_row").removeClass('d-none');
+              $("#cemail_row").addClass('d-flex');
+              
+              $("#cgst_trt_row").removeClass('d-none');
+              $("#cgst_trt_row").addClass('d-flex');
+              $('#cemail_inp').val(' '+ data.customer_email);
+              $('#cgst_trt_inp').val(' ' +data.gst_treatment);
+
+              if( data.gst_treatment == 'Registered Business-Regular Business that is registered under GST'){
+                $("#cgstin_row").removeClass('d-none');
+                $("#cgstin_row").addClass('d-flex');
+                $('#cgstin_inp').val(' '+ data.gstin);
+
+              }
+              else if( data.gst_treatment == 'Registered Business-Composition Business that is registered under the Composition scheme in GST'){
+                $("#cgstin_row").removeClass('d-none');
+                $("#cgstin_row").addClass('d-flex');
+                $('#cgstin_inp').val(' '+ data.gstin);
+              }
+              else if( data.gst_treatment == 'Overseas- Persons with who you do import or exports of supplies outside india'){
+                $("#cgstin_row").removeClass('d-none');
+                $("#cgstin_row").addClass('d-flex');
+                $('#cgstin_inp').val(' '+ data.gstin);
+              }
+              
+              else{
+                $("#cgstin_row").addClass('d-none');
+              }
+
+                // gst or igst in tax
+
+              $("#cust_state").val(data.state);
+              
+            }
+           
+        });
+    });
+});
     </script>
     <!-- Add your existing HTML content here -->
 {% endblock %}

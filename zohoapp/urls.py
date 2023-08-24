@@ -345,7 +345,7 @@ urlpatterns = [
     path('eway_unit',views.eway_unit,name='eway_unit'),
     path('eway_unit_dropdown',views.eway_unit_dropdown,name = 'eway_unit_dropdown'),
     path('unit_get_rate',views.unit_get_rate ,name = 'unit_get_rate'),
-
+    path('create_ewaybillz',views.create_ewaybillz,name='create_ewaybillz'),
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     
