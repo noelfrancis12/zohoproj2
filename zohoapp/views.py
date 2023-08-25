@@ -7206,6 +7206,7 @@ def create_ewaybillz(request):
     if request.method == 'POST':
         user_id=request.user.id
         user=User.objects.get(id=user_id)
+
         doc = request.POST.get('doc')
         transsub = request.POST.get('transsub')
         customer = request.POST.get('customer')
@@ -7282,3 +7283,8 @@ def create_ewaybillz(request):
             return redirect('ewaylistout')
     
     return render(request, 'ewaycreate.html')
+def ewayoverview(request,id):
+    eway=EWayBill.objects.filter(user=request.user)
+    ewayi=EWayBill.objects.filter(id=id)
+    ewayb = EWayBillItem.objects.filter(eway_bill_id=id)  # Fetch items related to the EWayBill id
+    return render(request, 'ewayoverview.html',{'eway':eway,"ewayi":ewayi,'ewayb':ewayb})

@@ -1404,15 +1404,23 @@
                             </div>
                             <div class="col-md-6 mt-2">
                               <div class="d-flex">
-                                <select class="form-control bg-light text-dark" id="c_terms" name="c_terms" required>
-              
-                                  {% for p in payment %}
+                                <select class="form-control text-dark bg-light" id="c_terms" name="c_terms" required>
+                                  <option selected value="15">NET 15</option>
+                                  <option value="30">NET 30</option>
+                                  <option value="45">NET 45</option>
+                                  <option value="60">NET 60</option>
+                                  <option value="90">NET 90</option>
+                                  <option value="">Due end of the month</option>
+                                  <option value="recpt">Due on receipt</option>
+                                  {% for p in payments %}
                                   <option value="{{p.Terms}} {{p.id}}">{{p.Terms}}</option>
                                   {% endfor %}
                                 </select>                
+                                <a href="#" class="btn btn-outline-secondary py-2 my-1" data-target="#newpayment" data-toggle="modal">+</a>   
                               </div>
                             </div>       
                           </div>
+                          
                           
           
                           <hr>
@@ -4663,4 +4671,133 @@
 });
     </script>
     <!-- Add your existing HTML content here -->
+<!-- payment modal -->
+
+
+<div class="modal fade" id="newpayment">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content" style="background: rgb(32, 35, 37);border-radius: 20px;">
+      <div class="modal-header " style="background: rgb(32, 35, 37);">
+          <h3 class="m-3 text-uppercase">Add Payment Term</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body" style="background: rgb(32, 35, 37);">
+        <div class="card p-3 m-3">
+          <form action="" method="post" class="needs-validation" novalidate autocomplete="off" id="modalPayment">
+            <div class="row mt-2">
+              <div class="col-md-2 mt-2"></div>
+              <div class="col-md-4 mt-2">
+                <center><label for="termname" style="color: rgb(190, 88, 88);">Term Name *</label></center>
+              </div>
+
+              <div class="col-md-4 mt-2">
+                <center><label for="termdays" style="color: rgb(190, 88, 88);">Number of Days *</label></center>
+              </div>
+              <div class="col-md-2 mt-2"></div>
+            </div>
+
+
+            <div class="row mt-2">
+              <div class="col-md-2 mt-2"></div>
+
+              <div class="col-md-4 mt-2">
+                <input type="text" class="form-control text-dark bg-light" id="term_name" name="term_name" required>      
+              </div>
+
+              <div class="col-md-4 mt-2">
+                <input type="text" class="form-control text-dark bg-light" id="term_days" name="term_days" required>
+              </div>
+              <div class="col-md-2 mt-2"></div>
+
+            </div>
+            
+            <div class="row mt-5">
+              <div class="col-md-4"></div>
+              <div class="col-md-4">
+                <div class="d-flex">
+                  <button class="btn save_btn rounded-pill text-grey w-50 my-4 mx-3"
+                  type="submit" data-dismiss="modal" id="paySave">Save
+                  </button> 
+                  
+
+                  <button type="button" class="close btn save_btn rounded-pill text-grey w-50 my-4" 
+                    data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">Cancel</span>
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-4"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>  
+</div>     
+<script>
+  //--------payment terms modal-----------
+
+$(document).on("click","#paySave",function(){
+  $.ajax({
+    
+    type : 'POST',
+    url:"{% url 'recurbills_pay' %}",
+
+    data:{
+        name : $("#term_name").val(),
+        days : $("#term_days").val(),
+        
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+        
+      },
+    
+      success: function(response) {
+        document.getElementById("modalPayment").reset();
+        reloadPayment();
+      },
+  });        
+});
+
+function reloadPayment() {
+
+  $.ajax({
+    url: "{% url 'pay_dropdown' %}",
+    type: "GET",
+    dataType: "json",
+    data: $(this).serialize(),
+    csrfmiddlewaretoken: '{{ csrf_token }}',
+
+    success: function(data) {
+      var dropdown = $('#terms');
+      dropdown.empty();
+      dropdown.append(`<option selected value="15">NET 15</option>
+                          <option value="30">NET 30</option>
+                          <option value="45">NET 45</option>
+                          <option value="60">NET 60</option>
+                          <option value="90">NET 90</option>
+                          <option value="">Due end of the month</option>
+                          <option value="recpt">Due on receipt</option>`);
+      var drpv = $('#v_terms');
+      drpv.empty();
+      drpv.append(`<option selected value="15">NET 15</option>
+                        <option value="30">NET 30</option>
+                        <option value="45">NET 45</option>
+                        <option value="60">NET 60</option>
+                        <option value="90">NET 90</option>
+                        <option value="">Due end of the month</option>
+                        <option value="recpt">Due on receipt</option>`);
+      $.each(data, function(key, value) {
+          dropdown.append($('<option></option>').attr('value', key).text(value[0]).val(value[1]));
+          drpv.append($('<option></option>').attr('value', key).text(value).val(value));
+      });
+    },
+    error: function(xhr, status, error) {
+    console.error(xhr.responseText);
+    }
+  });
+}
+
+</script> 
 {% endblock %}

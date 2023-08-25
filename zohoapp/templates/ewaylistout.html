@@ -85,7 +85,7 @@
                         <div class="dropdown-menu ">
                             <a class="dropdown-item" href="" style="color:rgb(218, 164, 48) ;">All</a>
                             <a class="dropdown-item" href="#" style="color:rgb(218, 164, 48) ;" id="sortCustomer">Customer</a>
-                            <a class="dropdown-item" href="#" style="color:rgb(218, 164, 48) ;" id="sortProject">Project</a>
+                            <a class="dropdown-item" href="#" style="color:rgb(218, 164, 48) ;" id="sortProject">Date</a>
 
                         </div>&nbsp;&nbsp;&nbsp;
                         <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="btn btn-warning mr-2" href="{% url 'ewaycreate' %}">
@@ -113,14 +113,14 @@
                   {% for v in proj %}
                   <tr id="over">
                     <!--<td onclick="location.href ='{% url 'detail' v.id %}' " > {{v.name}}</td> -->
-                    <td>{{v.date}}</td>  
-                    <td>{{v.invoiceno}}</td>
+                    <td><a href="{% url 'ewayoverview' v.id %}"> {{v.date}} </a></td>  
+                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.invoiceno}}</a></td>
                    
-                    <td> {{v.customer}} </td>
-                    <td>{{v.cemail}}</td>
-                    <td>{{v.cgstin_inp}}</td>
+                    <td><a href="{% url 'ewayoverview' v.id %}"> {{v.customer}}</a> </td>
+                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.cemail}}</a></td>
+                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.cgstin_inp}}</a></td>
                    
-                    <td>{{v.grand_total}}</td>
+                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.grand_total}}</a></td>
                   </tr>
                   {% endfor %}
                 </tbody>
@@ -138,136 +138,19 @@
     </div>
 
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-      const table = document.getElementById("vendorTable");
-      const sortProjectLink = document.getElementById("sortProject");
-      const sortCustomerLink = document.getElementById("sortCustomer");
-  
-      sortProjectLink.addEventListener("click", function() {
-          sortTable(table, 2); // 2 is the index of the project name column
-      });
-  
-      sortCustomerLink.addEventListener("click", function() {
-          sortTable(table, 0); // 0 is the index of the customer name column
-      });
-  
-      function sortTable(table, columnIndex) {
-          const rows = Array.from(table.tBodies[0].rows);
-  
-          rows.sort(function(rowA, rowB) {
-              const cellA = rowA.cells[columnIndex].textContent.trim();
-              const cellB = rowB.cells[columnIndex].textContent.trim();
-              return cellA.localeCompare(cellB);
-          });
-  
-          for (const row of rows) {
-              table.tBodies[0].appendChild(row);
-          }
-      }
-  });
-  </script>
-  
-  
-<!-- Your HTML code remains the same -->
-
-<!-- Your HTML code remains the same -->
-
-<script>
-  var sortDropdown = document.getElementById('sortDropdown');
-  var projectRows = document.querySelectorAll('#vendorTable tbody tr');
-  var originalOrder = Array.from(projectRows); // Store the original order of rows
-
-  sortDropdown.addEventListener('change', function () {
-    var sortBy = sortDropdown.value;
-    sortRows(sortBy);
-  });
-
-  function sortRows(sortBy) {
-    var rowsArray = Array.from(projectRows);
-
-    if (sortBy === '') {
-      rowsArray = originalOrder.slice(); // Restore the original order
-    } else {
-      rowsArray.sort(function (a, b) {
-        var valueA = a.querySelector(`td:nth-child(${getSortColumnIndex(sortBy)})`).textContent.trim();
-        var valueB = b.querySelector(`td:nth-child(${getSortColumnIndex(sortBy)})`).textContent.trim();
-        return valueA.localeCompare(valueB);
-      });
-    }
-
-    var tbody = document.querySelector('#vendorTable tbody');
-    while (tbody.firstChild) {
-      tbody.removeChild(tbody.firstChild);
-    }
-    rowsArray.forEach(function (row) {
-      tbody.appendChild(row);
-    });
-  }
-
-  function getSortColumnIndex(sortBy) {
-    switch (sortBy) {
-      case 'projectName':
-        return 3; // Column index (1-based) for project name
-      case 'customerName':
-        return 1; // Column index (1-based) for customer name
-      default:
-        return 3;
-    }
-  }
-</script>
-
-
-
-<script>
-  var toggleButtons = document.querySelectorAll('.toggleButton');
-
-  toggleButtons.forEach(function(button) {
-    button.addEventListener('click', function(event) {
-      event.preventDefault();
-      var projectId = button.getAttribute('data-project-id');
-      var url = '/toggle-status/' + projectId + '/';
-
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          button.innerHTML = data.status ? 'Active' : 'Inactive';
-        })
-        .catch(error => {
-          console.log('Error:', error);
+    $(document).ready(function() {
+        // Loop through each cell in the CUSTOMER NAME column and remove numbers
+        $("#vendorTable tbody tr").each(function() {
+            var customerNameCell = $(this).find("td:eq(2)"); // Index 2 represents the CUSTOMER NAME column
+            var originalName = customerNameCell.text();
+            var nameWithoutNumbers = originalName.replace(/\d+/g, ''); // Remove all numbers
+            customerNameCell.text(nameWithoutNumbers);
         });
     });
-  });
 </script>
-<script>
-
-  var vendorSearchInput = document.getElementById('vendorSearchInput');
-var vendorRows = document.querySelectorAll('#vendorTable tbody tr');
-
-vendorSearchInput.addEventListener('input', function () {
-  var searchValue = vendorSearchInput.value.toLowerCase();
-
-  vendorRows.forEach(function (row) {
-    var cells = row.querySelectorAll('td');
-    var found = false;
-
-    cells.forEach(function (cell) {
-      var cellValue = cell.textContent.toLowerCase();
-      if (cellValue.includes(searchValue)) {
-        found = true;
-      }
-    });
-
-    if (found) {
-      row.style.display = '';
-    } else {
-      row.style.display = 'none';
-    }
-  });
-});
-</script>
-
-
 
 
 {% endblock %}
