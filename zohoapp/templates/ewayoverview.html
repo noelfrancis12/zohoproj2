@@ -293,7 +293,7 @@
                             </div>
                         </div>
                         <div class="col-md-2 mr-4 mt-2">
-                            <a href="{% url 'add_recurring_bills' %}" class="btn btn-primary fa fa-plus px-3 pt-1"
+                            <a href="{% url 'ewaycreate' %}" class="btn btn-primary fa fa-plus px-3 pt-1"
                                 role="button">
                             </a>
                         </div>
@@ -351,12 +351,12 @@
                             data-toggle="modal" data-target="#cmnts"> </a>
                     </div>
 
-                    <div class="mx-4">
-                        <a href="#" class=" fa fa-pencil btns px-2 py-2"
+                    <div class="mx-4">{% for v in ewayi %}
+                        <a href="{% url 'ewayedit' v.id  %}" class=" fa fa-pencil btns px-2 py-2"
                               data-toggle="tooltip" title="EDIT"> </a>
-                        <a href="# " class="delete fa fa-trash btns px-2 py-2"
-                         data-toggle="tooltip" title="DELETE" onclick="return confirm('Do you want to Delete this Recurring Bill?');"> </a>
-                    </div>
+                        <a href="{% url 'delete_ewaybills' v.id  %}" class="delete fa fa-trash btns px-2 py-2"
+                         data-toggle="tooltip" title="DELETE" onclick="return confirm('Do you want to Delete this Eway Bill?');"> </a>
+                    </div>{% endfor %}
 
                     <div class="mx-1">
                    
@@ -428,10 +428,10 @@
                                     <p class="text-capitalize" id="pid" hidden>{{recur_bill.id}}</p>
 
                                 </div>
-                                <div class="position-relative">
-                                    <p>Bill Date : &nbsp <span style="color: black;">{{date|date:'d-m-Y'}}</span></p>
-                                    <p>Due Date : &nbsp <span style="color: black;">{{recur_bill.end_date|date:'d-m-Y'}}</span></p>
-                                    <p>Term : &nbsp <span style="color: black;">NET {{recur_bill.payment_terms}}</span></p> 
+                                <div class="position-relative">{% for v in eway %}
+                                    <p>Bill Date : &nbsp <span style="color: black;">{{v.date|date:'d-m-Y'}}</span></p>
+                                    <p>Document : &nbsp <span style="color: black;">{{v.doc}}</span></p>
+                                    <p>Transation subtype: &nbsp <span style="color: black;">NET {{v.transsub}}</span></p> {% endfor %}
                                 </div>
                             </div>
                         </section>
@@ -446,12 +446,12 @@
 
                             <div class="col-1 "></div>
                             <div class="col-5">
-                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>
-                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ vendor.salutation}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
-                                <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">{{vendor.baddress}}<br>
-                                    {{vendor.bcity}}<br>
-                                    {{vendor.bstate}}<br> 
-                                </p>
+                                <!--<p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>{% for v in eway %}
+                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ v.customer}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
+                                <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">{{v.adda}}<br>
+                                    {{v.addb}}<br>
+                                    {{v.srcofsupply}}<br> 
+                                </p>{% endfor %}-->
                             </div>
                             <div class="col-1"></div>
                             <!-- <div class="col-5 mt-5">
@@ -462,16 +462,12 @@
                             </div> -->
 
                             <div class="col-5">
-                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Deliver To,</p>
-                                <h6  class="mx-2 text-capitalize" style="color: black;">{{customer.customerName}}</h6>
-                                <p class="address col-6 mx-3 p-2" style="margin-left: -14px;">{{customer.Address1}} <br>
-                                    {{customer.Address2}}<br>
-                                    {{customer.city}}<br>
-                                    {{customer.state}}<br>
-
-                                    
-                                </p>
-
+                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>{% for v in eway %}
+                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ v.customer}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
+                                <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">{{v.adda}}<br>
+                                    {{v.addb}}<br>
+                                    {{v.srcofsupply}}<br> 
+                                </p>{% endfor %}
                             </div>
                         </div>
 
@@ -766,11 +762,11 @@
                         <form action="" method="post" class="needs-validation" novalidate autocomplete="off"
                             id="modalComment">
                             <div class="row mt-2">
-                                <input type="hidden" value="{{recur_bill.id}}" id="com_id">
+                                <input type="hidden" value="{{eway.id}}" id="com_id">
                                 <div class="col-md-6 mt-2">
-                                    {% if recur_bill.comments %}
+                                    {% if eway.comments %}
                                     <textarea class="form-control text-dark bg-light" id="comment" name="comment" required
-                                        style="height: 200px; width: 550px;">{{recur_bill.comments}}</textarea>
+                                        style="height: 200px; width: 550px;">{{eway.comments}}</textarea>
                                     {% else %}
                                     <textarea class="form-control text-dark bg-light" id="comment" name="comment" required
                                         style="height: 200px; width: 550px;"></textarea>
@@ -971,7 +967,7 @@
             $.ajax({
 
                 type: 'POST',
-                url: "{% url 'recurbill_comment' %}",
+                url: "{% url 'ewaybill_comment' %}",
 
                 data: {
                     id: $("#com_id").val(),

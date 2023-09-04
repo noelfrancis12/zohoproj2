@@ -7288,3 +7288,43 @@ def ewayoverview(request,id):
     ewayi=EWayBill.objects.filter(id=id)
     ewayb = EWayBillItem.objects.filter(eway_bill_id=id)  # Fetch items related to the EWayBill id
     return render(request, 'ewayoverview.html',{'eway':eway,"ewayi":ewayi,'ewayb':ewayb})
+def delete_ewaybills(request, id):
+
+    
+    ebill=EWayBill.objects.get(user = request.user, id= id)
+    billway = EWayBill.objects.filter(user = request.user,id=id)
+
+    ebill.delete() 
+    billway.delete() 
+     
+    return redirect('ewaylistout')
+def ewayedit(request,id):
+     user_id=request.user.id
+     udata=User.objects.get(id=user_id)
+     data=customer.objects.all()
+     payments=payment_terms.objects.all()
+     trans=Transportation.objects.all()
+     units = Unit.objects.all()
+     sales=Sales.objects.all()
+     purchase=Purchase.objects.all()
+     sales_type = set(Sales.objects.values_list('Account_type', flat=True))
+     purchase_type = set(Purchase.objects.values_list('Account_type', flat=True))
+     item = AddItem.objects.filter(user = request.user)
+     eway=EWayBill.objects.get(id=id)
+     ewayi=EWayBill.objects.filter(id=id)
+     ewayb=EWayBillItem.objects.filter(eway_bill_id=id)
+     return render(request,'ewayedit.html',{'data':data,'payments':payments,'trans':trans,'units':units,'sales':sales,'purchase':purchase,'sales_type':sales_type,'purchase_type':purchase_type,'item':item,'eway':eway,'ewayb':ewayb,'ewayi':ewayi})
+def ewaybill_comment(request):
+
+    
+
+    if request.method=='POST':
+        id =request.POST.get('id')
+        cmnt =request.POST.get('comment')
+        
+        u = User.objects.get(id = request.user.id)
+        e_bill = EWayBill.objects.get(user = request.user, id = id)
+        e_bill.comments = cmnt
+        e_bill.save()
+
+        return HttpResponse({"message": "success"})

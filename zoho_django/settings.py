@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'zoho_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'zzdb',
+        'NAME': 'zzzdb',
         'USER':'root',
         'PASSWORD':'',
         'HOST':'localhost',

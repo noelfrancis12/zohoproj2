@@ -378,9 +378,9 @@
                     <div class="col-sm-12 col-md-6 col-lg-6 d-flex align-items-center">
                         <select name="transportation" id="transportation" class="form-control bg-light text-dark">
                             <option value="" hidden selected></option>
-                            <option value="Fixed cost for project">Bus</option>
-                            <option value="Based on project hours">Car</option>
-                            <option value="Based on project hours">Train</option>
+                            <option value="Bus">Bus</option>
+                            <option value="Car">Car</option>
+                            <option value="Train">Train</option>
                             {% for p in trans %}
                             <option value="{{p.method}}">{{p.method}}</option>
                             {% endfor %}
