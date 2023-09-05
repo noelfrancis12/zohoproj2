@@ -564,15 +564,15 @@
                 <center>
                     <h2 class="mb-4" style=" color: #434141;">EWAY BILL</h2>
                 </center>
-
+                {% for v in eway %}
                 <div class="row g-0">
                     <div class="col-md-7">
                         <div class="p-5">
-                            <p class="text-grey">Bill Amount</p>
+                            <p class="text-grey">Customer Name</p>
                             <div class="d-flex justify-content-between align-items-center mb-5">
                                 <b>
                                     <span style=" color: #434141;">
-                                        ₹ <input type="text" value="{{ recur_bill.grand_total|floatformat:2 }}"
+                                        <input type="text" value="{{ v.customer }}"
                                             class="amnt text-dark" style="font-size: 18px; color: #434141;">
                                     </span>
                                 </b>
@@ -582,27 +582,27 @@
 
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
-                                    <h6 class="mb-0 text-grey ">Profile Name :</h6>
+                                    <h6 class="mb-0 text-grey ">Customer E-mail :</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0 " style="font-size: 18px; color: #434141;">{{ recur_bill.profile_name }}</p>
+                                    <p class="mb-0 " style="font-size: 18px; color: #434141;">{{ v.cemail }}</p>
                                 </div>
                             </div>
 
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
-                                    <h6 class="mb-0 text-grey " >Repeat Every :</h6>
+                                    <h6 class="mb-0 text-grey " >CGST type :</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{ recur_bill.repeat_every }}</p>
+                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{ v.cgst_trt_inp }}</p>
                                 </div>
                             </div>
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
-                                    <h6 class="mb-0 text-grey">Start Date :</h6>
+                                    <h6 class="mb-0 text-grey">CGST No. :</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{ recur_bill.start_date |date:'d-m-Y' }}</p>
+                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{ v.cgstin_inp }}</p>
                                 </div>
 
                             </div>
@@ -613,16 +613,16 @@
                                     <h6 class="mb-0 text-grey">End Date :</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{ recur_bill.end_date |date:'d-m-Y' }}</p>
+                                    <p class="mb-0" style="font-size: 18px; color: #434141;">{{ v.date }}</p>
                                 </div>
                             </div>
 
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-6 mt-3">
-                                    <h6 class="mb-0 text-grey">Payment Terms:</h6>
+                                    <h6 class="mb-0 text-grey">Address:</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0" style="font-size: 18px; color: #434141;"> NET {{ recur_bill.payment_terms }}</p>
+                                    <p class="mb-0" style="font-size: 18px; color: #434141;">  {{ v.adda }}</p>
                                 </div>
                             </div>
 
@@ -631,7 +631,7 @@
                                     <h6 class="mb-0 text-grey">Tax :</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <span style="font-size: 18px; color: #434141;">{{ gst_or_igst }} - </span>
+                                    <span style="font-size: 18px; color: #434141;">{{ v.tax }} % </span>
                                     {% for bi in tax %}
                                         <input type="text" value="{{ bi|floatformat:2 }}" style="font-size: 18px; color: #434141; width: 55px;" class="tax 1 tx">
                                     <span class="text-muted">%</span><br><span style="margin-left: 55px;"></span>
@@ -643,7 +643,7 @@
                                     <h6 class="mb-0 text-grey">Source of Supply :</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0 text-capitalize" style="font-size: 18px; color: #434141;">{{ recur_bill.source_supply }}</p>
+                                    <p class="mb-0 text-capitalize" style="font-size: 18px; color: #434141;">{{ v.srcofsupply }}</p>
                                 </div>
 
                             </div>
@@ -652,41 +652,42 @@
                                     <h6 class="mb-0 text-grey">Note :</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0 text-capitalize" style="font-size: 18px; color: #434141;">{{ recur_bill.note }}</p>
+                                    <p class="mb-0 text-capitalize" style="font-size: 18px; color: #434141;">{{ v.note }}</p>
                                 </div>
 
                             </div>
                             <!-- <hr class="my-4"> -->
                         </div>
-                    </div>
+                    </div>{% endfor %}
+                    {% for v in eway %}
                     <div class="col-md-5  " style="background-color:#8b3131; border-radius: 5px;" >
                         <div class="p-5">
                             <div class="d-block justify-content-between mb-5">
                                 <div class="col-md-12 mt-3">
-                                    <h5 style="color: #ccc;">Vendor :</h5>
+                                    <h5 style="color: #ccc;">Subtotal :</h5>
                                 </div><br>
                                 <div class="col-md-12 my-0 mx-5">
-                                    <h6 class="text-capitalize" style="color: azure;">{{ vendor_name }}</h6>
+                                    <h6 class="text-capitalize" style="color: azure;">{{ v.sub_total }}</h6>
                                 </div>
                             </div>
                             <div class="d-block justify-content-between mb-5">
                                 <div class="col-md-12 mt-3">
-                                    <h5 style="color: #ccc;">Customer :</h5>
+                                    <h5 style="color: #ccc;">Adjustment :</h5>
                                 </div><br>
                                 <div class="col-md-12 my-0 mx-5">
-                                    <h6 class="text-capitalize " style="color: azure;">{{ customer_name }}
+                                    <h6 class="text-capitalize " style="color: azure;">{{ v.adj }}
                                     </h6>
                                 </div>
                             </div>
 
                             <hr class="my-4">
-{% for i in eway %}
+
                             <div class="d-flex justify-content-between mb-5">
                                 <div class="col-md-5 mt-3">
-                                    <h6 style="color: #ccc;">Subtotal :</h5><br>
+                                    <h6 style="color: #ccc;">SGST :</h5><br>
                                 </div>
                                 <div class="col-md-7 mt-3 mx-3">
-                                    <input type="text" value="{{ recur_bill.sub_total|floatformat:2 }} INR" class="amnt"
+                                    <input type="text" value="{{ v.sgst }} INR" class="amnt"
                                         style="font-size: 16px; color: azure;" readonly>
                                 </div>
                             </div>
@@ -695,16 +696,16 @@
                                     <h6 style="color: #ccc;">IGST :</h5><br>
                                 </div>
                                 <div class="col-md-8 mt-3 mx-3">
-                                    <input type="text" value="{{ i.igst }} INR" class="amnt"
+                                    <input type="text" value="{{ v.igst }} INR" class="amnt"
                                         style="font-size: 16px; color: azure;" readonly>
                                 </div>
                             </div>
-                            <div class=" justify-content-between mb-5 d-none" id="cgst">
+                            <div class=" justify-content-between mb-5 " id="cgst">
                                 <div class="col-md-4 mt-3">
                                     <h6 style="color: #ccc;">CGST :</h5><br>
                                 </div>
                                 <div class="col-md-8 mt-3 mx-3">
-                                    <input type="text" value="{{ recur_bill.cgst|floatformat:2 }} INR" class="amnt"
+                                    <input type="text" value="{{ v.cgst }} INR" class="amnt"
                                         style="font-size: 16px; color: azure;" readonly>
                                 </div>
                             </div>
@@ -722,7 +723,7 @@
                                     <h6 style="color: #ccc;">Shipping Charge :</h5><br>
                                 </div>
                                 <div class="col-md-4 mt-3 mx-3">
-                                    <input type="text" value="{{ recur_bill.shipping_charge }} INR" class="amnt"
+                                    <input type="text" value="{{ v.shipping_charge }} INR" class="amnt"
                                         style="font-size: 16px; color: azure;" readonly>
                                 </div>
                             </div>
@@ -732,11 +733,11 @@
                                     <h6 style="color: #ccc;">Grand Total :</h5><br>
                                 </div>
                                 <div class="col-md-6 mt-3 mx-3">
-                                    <input type="text" value="{{ recur_bill.grand_total|floatformat:2 }} INR"
+                                    <input type="text" value="{{ v.grand_total }} INR"
                                         class="amnt " style="font-size: 16px; color: azure;" readonly>
                                 </div>
                             </div>
-{% endfor %}
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

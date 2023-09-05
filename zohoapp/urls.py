@@ -350,6 +350,7 @@ urlpatterns = [
     path('delete_ewaybills/<id>',views.delete_ewaybills,name='delete_ewaybills'),
     path('ewayedit/<int:id>/',views.ewayedit,name='ewayedit'),
     path('ewaybill_comment',views.ewaybill_comment,name = "ewaybill_comment"),
+    path('ewayeditdb/<int:id>/',views.ewayeditdb,name='ewayeditdb'),
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     
     

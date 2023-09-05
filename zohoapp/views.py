@@ -7328,3 +7328,63 @@ def ewaybill_comment(request):
         e_bill.save()
 
         return HttpResponse({"message": "success"})
+def ewayeditdb(request, id):
+    eway = get_object_or_404(EWayBill, id=id)
+
+    if request.method == 'POST':
+        user_id = request.user.id
+        user = User.objects.get(id=user_id)
+
+        # Update EWayBill fields
+        eway.doc = request.POST.get('doc')
+        eway.transsub = request.POST.get('transsub')
+        eway.customer = request.POST.get('customer')
+        eway.cemail = request.POST.get('cemail')
+        eway.cgst_trt_inp = request.POST.get('cgst_trt_inp')
+        eway.cgstin_inp = request.POST.get('cgstin_inp')
+        eway.invoiceno = request.POST.get('invoiceno')
+        eway.date = request.POST.get('date')
+        eway.trans = request.POST.get('trans')
+        eway.adda = request.POST.get('adda')
+        eway.addb = request.POST.get('addb')
+        eway.srcofsupply = request.POST.get('srcofsupply')
+        eway.transportation = request.POST.get('transportation')
+        eway.km = request.POST.get('km')
+        eway.vno = request.POST.get('vno')
+        eway.sub_total = request.POST['subtotal']
+        eway.sgst = request.POST['sgst']
+        eway.cgst = request.POST['cgst']
+        eway.igst = request.POST['igst']
+        eway.tax = request.POST['total_taxamount']
+        eway.shipping_charge = request.POST['shipping_charge']
+        eway.adj = request.POST['adj']
+        eway.grand_total = request.POST['grandtotal']
+        eway.note = request.POST['note']
+        eway.save()
+
+        # Delete existing EWayBillItems associated with this EWayBill
+        EWayBillItem.objects.filter(eway_bill=eway).delete()
+
+        # Update EWayBillItems
+        items = request.POST.getlist("item[]")
+        quantities = request.POST.getlist("quantity[]")
+        rates = request.POST.getlist("rate[]")
+        taxes = request.POST.getlist("tax[]")
+        discounts = request.POST.getlist("discount[]")
+        amounts = request.POST.getlist("amount[]")
+
+        if len(items) == len(quantities) == len(rates) == len(discounts) == len(taxes) == len(amounts):
+            for i in range(len(items)):
+                EWayBillItem.objects.create(
+                    eway_bill=eway,
+                    item=items[i],
+                    quantity=quantities[i],
+                    rate=rates[i],
+                    tax=taxes[i],
+                    discount=discounts[i],
+                    amount=amounts[i],
+                )
+
+            return redirect('ewayoverview' ,id=id)
+
+    return render(request, 'ewayedit.html', {'eway': eway})
