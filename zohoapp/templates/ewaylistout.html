@@ -104,7 +104,7 @@
                     <th>TRANSACTION#</th>
                     <th>CUSTOMER NAME</th>
                     <th>CUSTOMER E-MAIL</th>
-                    <th>CUSTOMER GSTIN</th>
+                    
                     <th>TOTAL</th>
                    
                   </tr>
@@ -116,9 +116,9 @@
                     <td><a href="{% url 'ewayoverview' v.id %}"> {{v.date}} </a></td>  
                     <td><a href="{% url 'ewayoverview' v.id %}">{{v.invoiceno}}</a></td>
                    
-                    <td><a href="{% url 'ewayoverview' v.id %}"> {{v.customer}}</a> </td>
-                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.cemail}}</a></td>
-                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.cgstin_inp}}</a></td>
+                    <td><a href="{% url 'ewayoverview' v.id %}"> {{v.cust.customerName}}</a> </td>
+                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.cust.customerEmail}}</a></td>
+                    
                    
                     <td><a href="{% url 'ewayoverview' v.id %}">{{v.grand_total}}</a></td>
                   </tr>
@@ -139,18 +139,7 @@
 
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // Loop through each cell in the CUSTOMER NAME column and remove numbers
-        $("#vendorTable tbody tr").each(function() {
-            var customerNameCell = $(this).find("td:eq(2)"); // Index 2 represents the CUSTOMER NAME column
-            var originalName = customerNameCell.text();
-            var nameWithoutNumbers = originalName.replace(/\d+/g, ''); // Remove all numbers
-            customerNameCell.text(nameWithoutNumbers);
-        });
-    });
-</script>
+
 
 
 {% endblock %}

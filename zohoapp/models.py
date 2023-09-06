@@ -745,7 +745,7 @@ class EWayBill(models.Model):
     cust=models.ForeignKey(customer,on_delete=models.CASCADE,null=True,blank=True)
     doc = models.CharField(max_length=50,null=True)
     transsub = models.CharField(max_length=50,null=True)
-    customer = models.CharField(max_length=100,null=True)
+    customerzz = models.CharField(max_length=100,null=True)
     cemail=models.EmailField(max_length=255,null=True)
     cgst_trt_inp = models.CharField(max_length=100,null=True)
     cgstin_inp = models.CharField(max_length=100,null=True)

@@ -247,8 +247,8 @@
           <label >Customer Name *</label><br>
         </div>
         <div class="col-md-6">
-          <select name="customer" id="customer" class="form-control text-dark bg-light" >
-            <option value="{{eway.customer}}" selected class="text-dark bg-light">{{eway.customer}}</option>  
+          <select name="customerzz" id="customer" class="form-control text-dark bg-light" >
+            <option value="{{eway.cust.customerName}}" selected class="text-dark bg-light">{{eway.cust.customerName}}</option>  
             {% for c in data %}
             <option value="{{c.id}} {{c.customerName}}">{{ c.customerName }}</option>
             {% endfor %}

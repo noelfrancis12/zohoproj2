@@ -308,9 +308,9 @@
                             
                             <div class="row mt-3">
                                 <div class="col-md-7">
-                                    <label style="color: azure; font-size: 18px;" class="mx-3 text-capitalize text-center pname"><a id="aover" href="{% url 'ewayoverview' b.id %}" style="color: rgb(230, 171, 45);font-size:130%;">{{b.customer}} </a></label><br>
+                                    <label style="color: azure; font-size: 18px;" class="mx-3 text-capitalize text-center pname"><a id="aover" href="{% url 'ewayoverview' b.id %}" style="color: rgb(230, 171, 45);font-size:130%;">{{b.cust.customerName}} </a></label><br>
                                         <!-- <label style="color: rgb(129, 126, 126); font-size: 15px;" class="mx-3 px-2"># RB- {{ b.id }} </label> -->
-                                        <label style="color: rgb(129, 126, 126); font-size: 15px; "class="mx-2 px-2"> {{ b.cemail}} </label>
+                                        <label style="color: rgb(129, 126, 126); font-size: 15px; "class="mx-2 px-2"> {{ b.cust.customerEmail}} </label>
                                 </div>
                                 <!-- <div class="col-md-1"></div> -->
                                 <div class="col-md-5 mt-3">
@@ -428,7 +428,7 @@
                                     <p class="text-capitalize" id="pid" hidden>{{recur_bill.id}}</p>
 
                                 </div>
-                                <div class="position-relative">{% for v in eway %}
+                                <div class="position-relative">{% for v in ewayi %}
                                     <p>Bill Date : &nbsp <span style="color: black;">{{v.date|date:'d-m-Y'}}</span></p>
                                     <p>Document : &nbsp <span style="color: black;">{{v.doc}}</span></p>
                                     <p>Transation subtype: &nbsp <span style="color: black;">NET {{v.transsub}}</span></p> {% endfor %}
@@ -462,8 +462,8 @@
                             </div> -->
 
                             <div class="col-5">
-                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>{% for v in eway %}
-                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ v.customer}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
+                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>{% for v in ewayi %}
+                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ v.cust.customerName}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
                                 <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">{{v.adda}}<br>
                                     {{v.addb}}<br>
                                     {{v.srcofsupply}}<br> 
@@ -564,7 +564,7 @@
                 <center>
                     <h2 class="mb-4" style=" color: #434141;">EWAY BILL</h2>
                 </center>
-                {% for v in eway %}
+                {% for v in ewayi %}
                 <div class="row g-0">
                     <div class="col-md-7">
                         <div class="p-5">
@@ -572,7 +572,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-5">
                                 <b>
                                     <span style=" color: #434141;">
-                                        <input type="text" value="{{ v.customer }}"
+                                        <input type="text" value="{{ v.cust.customerName }}"
                                             class="amnt text-dark" style="font-size: 18px; color: #434141;">
                                     </span>
                                 </b>
@@ -585,7 +585,7 @@
                                     <h6 class="mb-0 text-grey ">Customer E-mail :</h6>
                                 </div>
                                 <div class="col-md-6 mt-3">
-                                    <p class="mb-0 " style="font-size: 18px; color: #434141;">{{ v.cemail }}</p>
+                                    <p class="mb-0 " style="font-size: 18px; color: #434141;">{{ v.cust.customerEmail }}</p>
                                 </div>
                             </div>
 
@@ -659,7 +659,7 @@
                             <!-- <hr class="my-4"> -->
                         </div>
                     </div>{% endfor %}
-                    {% for v in eway %}
+                    {% for v in ewayi %}
                     <div class="col-md-5  " style="background-color:#8b3131; border-radius: 5px;" >
                         <div class="p-5">
                             <div class="d-block justify-content-between mb-5">

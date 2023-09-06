@@ -247,10 +247,10 @@
           <label >Customer Name *</label><br>
         </div>
         <div class="col-md-6">
-          <select name="customer" id="customer" class="form-control text-dark bg-light" >
+          <select name="customerzz" id="customer" class="form-control text-dark bg-light" >
             <option value=""></option>
             {% for c in data %}
-            <option value="{{c.id}} {{c.customerName}}">{{ c.customerName }}</option>
+            <option value="{{c.id}}" data-email="{{ c.customerEmail }}" data-gst-treatment="{{c.GSTTreatment}}" data-gst-number="{{c.GSTIN}}">{{ c.customerName }}</option>
             {% endfor %}
           </select>
           <a href="" data-toggle="modal" data-target="#newcustomer">+ Add New Customer</a>
@@ -261,7 +261,7 @@
         </div>
       </div>
 
-      <div class="row mt-2 d-none" id="cemail_row">
+      <div class="row mt-2 " id="cemail_row">
         <div class="col-md-3">
           <label for="cemail_inp">Customer Email</label>
         </div>
@@ -270,7 +270,7 @@
         </div>
       </div>
 
-      <div class="row mt-2 d-none" id="cgst_trt_row">
+      <div class="row mt-2 " id="cgst_trt_row">
         <div class="col-md-3">
           <label for="gst_trt_inp">GST Treatment</label>
         </div>
@@ -4800,4 +4800,23 @@ function reloadPayment() {
 }
 
 </script> 
+<script>
+  var customerSelect = document.getElementById('customer');
+  var customerEmailInput = document.getElementById('cemail_inp');
+  var gstTreatmentInput = document.getElementById('cgst_trt_inp');
+  var gstNumberInput = document.getElementById('cgstin_inp');
+
+  customerSelect.addEventListener('change', function() {
+    var selectedOption = this.options[this.selectedIndex];
+    var email = selectedOption.dataset.email;
+    var gstTreatment = selectedOption.dataset.gstTreatment;
+    var gstNumber = selectedOption.dataset.gstNumber;
+
+    customerEmailInput.value = email;
+    gstTreatmentInput.value = gstTreatment;
+    gstNumberInput.value = gstNumber;
+  });
+</script>
+
+
 {% endblock %}
