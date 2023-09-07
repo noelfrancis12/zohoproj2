@@ -276,19 +276,17 @@
                     </div>
                     <div class="row p-0 d-flex">
                         <div class="col-md-7">
-                            <input type="text" id="search" placeholder="Search..." class="form-control text-dark bg-light" autocomplete="off"  >
+                            <input type="text" id="searchInput" placeholder="Search..." class="form-control text-dark bg-light" autocomplete="off"  >
                         </div>
 
                         <div class="col-md-2 mt-2 mx-1">
                             <a class="btn text-center btn-primary bi bi-funnel px-3 py-1" data-bs-toggle="dropdown"
                                 role="button"></a>
                             <div class="dropdown-menu " style="z-index: 1;">
-                                 <a class="dropdown-item" href="#">Customer A-Z</a>
-                                <a class="dropdown-item" href="#">Customer Z-A</a>
-                                <a class="dropdown-item" href="#">Vendor A-Z</a>
-                                <a class="dropdown-item" href="#">Vendor Z-A</a>
-                                <a class="dropdown-item" href="#">Profile A-Z</a>
-                                <a class="dropdown-item" href="#">Profile Z-A</a>
+                                 <a class="dropdown-item" href="#" data-sort="customer-az">Customer A-Z</a>
+                                <a class="dropdown-item" href="#" data-sort="customer-za">Customer Z-A</a>
+                                <a class="dropdown-item" href="#" data-sort="amount">Amount</a>
+                               
 
                             </div>
                         </div>
@@ -304,17 +302,17 @@
 
                 <div class="row mt-5 bills">
                     {% for b in eway %}
-                        <a href="{% url 'view_recurring_bills' b.id %}" class="my-3">
+                    <a id="aover" href="{% url 'ewayoverview' b.id %}" style="color: rgb(230, 171, 45);font-size:130%;"> 
                             
                             <div class="row mt-3">
                                 <div class="col-md-7">
-                                    <label style="color: azure; font-size: 18px;" class="mx-3 text-capitalize text-center pname"><a id="aover" href="{% url 'ewayoverview' b.id %}" style="color: rgb(230, 171, 45);font-size:130%;">{{b.cust.customerName}} </a></label><br>
+                                    <label style="color: azure; font-size: 18px;" class="mx-3 text-capitalize text-center pname">{{b.cust.customerName}} </label><br>
                                         <!-- <label style="color: rgb(129, 126, 126); font-size: 15px;" class="mx-3 px-2"># RB- {{ b.id }} </label> -->
-                                        <label style="color: rgb(129, 126, 126); font-size: 15px; "class="mx-2 px-2"> {{ b.cust.customerEmail}} </label>
+                                        <label style="color: rgb(129, 126, 126); font-size: 15px; "class="mx-2 px-2 ename"> {{ b.cust.customerEmail}} </label>
                                 </div>
                                 <!-- <div class="col-md-1"></div> -->
                                 <div class="col-md-5 mt-3">
-                                    <label style="color: rgb(129, 126, 126); font-size: 15px;">₹ {{ b.grand_total|floatformat:2 }} </label>
+                                    <label style="color: rgb(129, 126, 126); font-size: 15px;" class="grand-total">₹ {{ b.grand_total|floatformat:2 }} </label>
                                 </div>
                             </div>
 
@@ -322,6 +320,77 @@
                         
                     {% endfor %}
                 </div>
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script>
+                    $(document).ready(function () {
+                        // Function to perform the search and filter results
+                        function filterResults() {
+                            var searchValue = $('#searchInput').val().toLowerCase();
+                            
+                            // Loop through each bill
+                            $('.bills a').each(function () {
+                                var customerName = $(this).find('.pname').text().toLowerCase();
+                                var customerEmail = $(this).find('.ename').text().toLowerCase();
+                                var grandTotal = $(this).find('.grand-total').text().toLowerCase();
+                                
+                                // Check if the search value is found in any of the fields
+                                if (customerName.indexOf(searchValue) !== -1 ||
+                                    customerEmail.indexOf(searchValue) !== -1 ||
+                                    grandTotal.indexOf(searchValue) !== -1) {
+                                    // Show the bill if it matches the search criteria
+                                    $(this).show();
+                                } else {
+                                    // Hide the bill if it does not match
+                                    $(this).hide();
+                                }
+                            });
+                        }
+                    
+                        // Attach the filter function to the input field's keyup event
+                        $('#searchInput').keyup(filterResults);
+                    });
+                    </script>
+                    
+                <script>
+                    $(document).ready(function() {
+    // Sort bills based on the selected option
+    $(".dropdown-item").click(function(e) {
+        e.preventDefault();
+        var sortOption = $(this).data("sort");
+        sortBills(sortOption);
+    });
+
+    // Function to sort bills
+    function sortBills(sortOption) {
+        var $bills = $(".bills a");
+        switch (sortOption) {
+            case "customer-az":
+                $bills.sort(function(a, b) {
+                    var textA = $(a).find(".pname").text().toUpperCase();
+                    var textB = $(b).find(".pname").text().toUpperCase();
+                    return textA.localeCompare(textB);
+                });
+                break;
+            case "customer-za":
+                $bills.sort(function(a, b) {
+                    var textA = $(a).find(".pname").text().toUpperCase();
+                    var textB = $(b).find(".pname").text().toUpperCase();
+                    return textB.localeCompare(textA);
+                });
+                break;
+            case "amount":
+                $bills.sort(function(a, b) {
+                    var amountA = parseFloat($(a).find(".grand-total").text().replace("₹", "").trim());
+                    var amountB = parseFloat($(b).find(".grand-total").text().replace("₹", "").trim());
+                    return amountA - amountB;
+                });
+                break;
+        }
+        $(".bills").empty().append($bills);
+    }
+});
+
+                </script>
                 <!-- Add jQuery library if not already included -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -446,12 +515,12 @@
 
                             <div class="col-1 "></div>
                             <div class="col-5">
-                                <!--<p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>{% for v in eway %}
+                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>{% for v in ewayi %}
                                 <h6  class="mx-3 text-capitalize" style="color: black; ">{{ v.customer}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
                                 <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">{{v.adda}}<br>
                                     {{v.addb}}<br>
                                     {{v.srcofsupply}}<br> 
-                                </p>{% endfor %}-->
+                                </p>{% endfor %}
                             </div>
                             <div class="col-1"></div>
                             <!-- <div class="col-5 mt-5">
@@ -462,7 +531,7 @@
                             </div> -->
 
                             <div class="col-5">
-                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>{% for v in ewayi %}
+                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Deliver To,</p>{% for v in ewayi %}
                                 <h6  class="mx-3 text-capitalize" style="color: black; ">{{ v.cust.customerName}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
                                 <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">{{v.adda}}<br>
                                     {{v.addb}}<br>
@@ -660,86 +729,57 @@
                         </div>
                     </div>{% endfor %}
                     {% for v in ewayi %}
-                    <div class="col-md-5  " style="background-color:#8b3131; border-radius: 5px;" >
+                    <div class="col-md-5" style="background-color:#8b3131; border-radius: 5px;">
                         <div class="p-5">
-                            <div class="d-block justify-content-between mb-5">
-                                <div class="col-md-12 mt-3">
+                            <!-- Subtotal -->
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="col-md-6 mt-3">
                                     <h5 style="color: #ccc;">Subtotal :</h5>
-                                </div><br>
-                                <div class="col-md-12 my-0 mx-5">
+                                </div>
+                                <div class="col-md-6 mt-3">
                                     <h6 class="text-capitalize" style="color: azure;">{{ v.sub_total }}</h6>
                                 </div>
-                            </div>
-                            <div class="d-block justify-content-between mb-5">
-                                <div class="col-md-12 mt-3">
-                                    <h5 style="color: #ccc;">Adjustment :</h5>
-                                </div><br>
-                                <div class="col-md-12 my-0 mx-5">
-                                    <h6 class="text-capitalize " style="color: azure;">{{ v.adj }}
-                                    </h6>
-                                </div>
-                            </div>
-
-                            <hr class="my-4">
-
-                            <div class="d-flex justify-content-between mb-5">
-                                <div class="col-md-5 mt-3">
-                                    <h6 style="color: #ccc;">SGST :</h5><br>
-                                </div>
-                                <div class="col-md-7 mt-3 mx-3">
-                                    <input type="text" value="{{ v.sgst }} INR" class="amnt"
-                                        style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div>
-                            <div class="justify-content-between mb-5 d-none" id="igst">
-                                <div class="col-md-4 mt-3">
-                                    <h6 style="color: #ccc;">IGST :</h5><br>
-                                </div>
-                                <div class="col-md-8 mt-3 mx-3">
-                                    <input type="text" value="{{ v.igst }} INR" class="amnt"
-                                        style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div>
-                            <div class=" justify-content-between mb-5 " id="cgst">
-                                <div class="col-md-4 mt-3">
-                                    <h6 style="color: #ccc;">CGST :</h5><br>
-                                </div>
-                                <div class="col-md-8 mt-3 mx-3">
-                                    <input type="text" value="{{ v.cgst }} INR" class="amnt"
-                                        style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div>
-                            <div class=" justify-content-between mb-5  d-none" id="sgst">
-                                <div class="col-md-4 mt-3">
-                                    <h6 style="color: #ccc;">SGST :</h5><br>
-                                </div>
-                                <div class="col-md-8 mt-3 mx-3">
-                                    <input type="text" value="{{ recur_bill.sgst|floatformat:2 }} INR" class="amnt"
-                                        style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between mb-5">
-                                <div class="col-md-8 mt-3">
-                                    <h6 style="color: #ccc;">Shipping Charge :</h5><br>
-                                </div>
-                                <div class="col-md-4 mt-3 mx-3">
-                                    <input type="text" value="{{ v.shipping_charge }} INR" class="amnt"
-                                        style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between mb-5">
+                            </div><br><br><br>
+                            <!-- Adjustment -->
+                            <div class="d-flex justify-content-between mb-3">
                                 <div class="col-md-6 mt-3">
-                                    <h6 style="color: #ccc;">Grand Total :</h5><br>
+                                    <h5 style="color: #ccc;">Adjustment :</h5>
                                 </div>
-                                <div class="col-md-6 mt-3 mx-3">
-                                    <input type="text" value="{{ v.grand_total }} INR"
-                                        class="amnt " style="font-size: 16px; color: azure;" readonly>
+                                <div class="col-md-6 mt-3">
+                                    <h6 class="text-capitalize" style="color: azure;">{{ v.adj }}</h6>
+                                </div>
+                            </div><br><br><br>
+                            <!-- SGST/IGST/CGST -->
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="col-md-6 mt-3">
+                                    <h6 style="color: #ccc;">SGST :</h6>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <input type="text" value="{{ v.sgst }} INR" class="amnt" style="font-size: 16px; color: azure;" readonly>
+                                </div>
+                            </div><br><br><br>
+                            <!-- Shipping Charge -->
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="col-md-6 mt-3">
+                                    <h6 style="color: #ccc;">Shipping Charge :</h6>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <input type="text" value="{{ v.shipping_charge }} INR" class="amnt" style="font-size: 16px; color: azure;" readonly>
+                                </div>
+                            </div><br><br><br>
+                            <!-- Grand Total -->
+                            <div class="d-flex justify-content-between">
+                                <div class="col-md-6 mt-3">
+                                    <h6 style="color: #ccc;">Grand Total :</h6>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <input type="text" value="{{ v.grand_total }} INR" class="amnt" style="font-size: 16px; color: azure;" readonly>
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
                     </div>
+                    
                 </div>
             </div>
 

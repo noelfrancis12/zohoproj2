@@ -84,8 +84,8 @@
                         </a>
                         <div class="dropdown-menu ">
                             <a class="dropdown-item" href="" style="color:rgb(218, 164, 48) ;">All</a>
-                            <a class="dropdown-item" href="#" style="color:rgb(218, 164, 48) ;" id="sortCustomer">Customer</a>
-                            <a class="dropdown-item" href="#" style="color:rgb(218, 164, 48) ;" id="sortProject">Date</a>
+                            <a class="dropdown-item" href="#" style="color:rgb(218, 164, 48) ;" id="sortCustomer" data-sort="customer">Customer</a>
+                            <a class="dropdown-item" href="#" style="color:rgb(218, 164, 48) ;" id="sortTrans" data-sort="transaction">Transaction</a>
 
                         </div>&nbsp;&nbsp;&nbsp;
                         <a style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="btn btn-warning mr-2" href="{% url 'ewaycreate' %}">
@@ -138,8 +138,69 @@
     </div>
 
 </div>
-
-
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Function to filter items based on the search query
+    function filterItems(query) {
+      query = query.toLowerCase();
+      $("#vendorTable tbody tr").each(function() {
+        const rowText = $(this).text().toLowerCase();
+        if (rowText.includes(query)) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    }
+  
+    // Handle keyup event on the search input
+    $("#vendorSearchInput").keyup(function() {
+      const searchQuery = $(this).val();
+      filterItems(searchQuery);
+    });
+  });
+  </script>
+<script>
+  $(document).ready(function() {
+    // Function to filter items based on the search query
+    function filterItems(query) {
+      query = query.toLowerCase();
+      $("#vendorTable tbody tr").each(function() {
+        const rowText = $(this).text().toLowerCase();
+        if (rowText.includes(query)) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+    }
+  
+    // Function to sort the table based on the selected criteria
+    function sortTable(criteria) {
+      const rows = $("#vendorTable tbody tr").get();
+      rows.sort(function(rowA, rowB) {
+        const cellA = $(rowA).find("td").eq(criteria === "customer" ? 2 : 1).text().toLowerCase();
+        const cellB = $(rowB).find("td").eq(criteria === "customer" ? 2 : 1).text().toLowerCase();
+        return cellA.localeCompare(cellB);
+      });
+      $("#vendorTable tbody").empty().append(rows);
+    }
+  
+    // Handle keyup event on the search input
+    $("#vendorSearchInput").keyup(function() {
+      const searchQuery = $(this).val();
+      filterItems(searchQuery);
+    });
+  
+    // Handle click event on dropdown items
+    $(".form-inline a").click(function() {
+      const sortingCriteria = $(this).data("sort");
+      if (sortingCriteria) {
+        sortTable(sortingCriteria);
+      }
+    });
+  });
+  </script>
 
 {% endblock %}
