@@ -18,101 +18,206 @@
       width: 70%;
       font-size: 10px;
       text-align: left;}
+     /* Container for the main content and sidebar */
+/* CSS Styles */
+.content-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-left: 18rem;
+}
+
+.main-content {
+    width: 75%;
+}
+
+.sidebar {
+    width: 20%;
+}
+/* Style for the small slider switch container */
+.small-switch {
+        position: relative;
+        display: inline-block;
+        width: 30px;
+        height: 15px;
+    }
+
+    /* Style for the slider */
+    .small-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 15px;
+    }
+
+    .slider.round {
+        border-radius: 50%;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 11px;
+        width: 11px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(15px);
+        -ms-transform: translateX(15px);
+        transform: translateX(15px);
+    }
     </style>
 <section>
 
-
-    <div class="row fixed-top  " style="top: 7rem; margin-left: 18rem;" >
+  <div class="content-container">
+    <!-- Main Content -->
+    <div class="main-content">
+    <div class="row fixed-top " style="top: 7rem; margin-left: 18rem;" >
 
         <div class="col-md-12">
 
-            <div style="height: 640px;width: 1215px;overflow-y: scroll;">
+            <div style="height: 640px;width: 900px;">
 
                 <div class="row">
 <h1 style="color: white;"> Dashboard</h1><br>
                     <div class="grid-container" style="background-color:black;color:white;"><fieldset style="border:1px solid white;background-color:black;color:white;width: 100%;">
                       <select name="" id="" style="float: right;">
                         <option value="This month" selected>This month</option>
+                        <option value="Last month" >Last month</option>
+                        <option value="This Quarter " >This Quarter</option>
+                        <option value="This Year" >This Year</option>
                       </select>
-                        <div class="grid-item" style="background-color:black;color:white;font-size:15px;"><h4><span class="menu-icon">
-                          <i class="mdi mdi-basket"></i>
-                        </span>&nbsp;Sale</h4><br>
-            
-                          <svg width="130%" height="300" viewBox="0 0 466 20" preserveAspectRatio="xMinYMin meet"
-                           style="background-color:black;color:rgb(237, 231, 231);" >
-                           <g class="bar-container" transform="translate(0,4)">
-                              <rect class="ph-rect" width="466" height="10" fill="#F4F4F4"></rect>
-                              <g class="rects-container" transform="translate(0, 0)"><rect height="10" width="391.2038162045045" class="cursor-pointer" x="0" style="fill:grey;"></rect>
-                                <rect height="10" width="74.7961837954955" class="cursor-pointer" x="391.20379638671875" style="fill:yellow"></rect>
-                              </g></g></svg>
-                          
-                            
-                        </div>
+                      <div class="grid-item" style="background-color: black; color: white; font-size: 15px;">
+                        <h4>
+                            <span class="menu-icon">
+                                <i class="mdi mdi-basket"></i>
+                            </span>&nbsp;Sale
+                        </h4><br>
+                        <svg width="100%" height="200" viewBox="0 0 1000 200" preserveAspectRatio="xMinYMin meet" style="background-color: black;">
+                          <path d="M0 100 C100 150, 150 80, 300 150 S450 80, 500 150 S650 80, 700 100 S800 150, 1000 100" fill="transparent" stroke="green" stroke-width="5" />
+                        </svg>
+                        <b><h6>$ 20,610.00</h6></b>
+                        <p>Total Sale(Aug)</p>
+                        <p>0%</p>
+                        <p>This month growth</p>
+                    </div>
                       </fieldset>
-                        <fieldset style="border: 1px solid white;width: 80%;">
-                          <select name="" id="" style="float: right;">
-                            <option value="This month" selected>This month</option>
-                          </select>
-                            <div class="grid-item" style="background-color:black;color:white;font-size:15px;"><h4><span class="menu-icon">
-                              <i class="mdi mdi-basket"></i>
-                            </span>&nbsp;Expenses</h4><br>
-                          <svg width="130%" height="20" viewBox="0 0 466 20" preserveAspectRatio="xMinYMin meet"
-                          style="background-color:black;color:white;">
-                            <g class="bar-container" transform="translate(0,4)">
-                              <rect class="ph-rect" width="466" height="10" fill="#F4F4F4"></rect>
-                              <g class="rects-container" transform="translate(0, 0)"><rect height="10" width="391.2038162045045" class="cursor-pointer" x="0" style="fill: grey;"></rect>
-                                <rect height="10" width="74.7961837954955" class="cursor-pointer" x="391.20379638671875" style="fill: yellow;"></rect>
-                              </g></g></svg>
-                              
-                              <table>
-                                <td style="color:white;"> &nbsp;&nbsp; Current<br> &nbsp;&nbsp; 0.00</td>
-                                <td></td><td></td><td></td><td></td>
-                                <td style="color:white;"> &nbsp;&nbsp; Over Due<br> &nbsp;&nbsp; 0.00</td>
-                              
-                              </table>
-                          </div></fieldset>
+                      <fieldset style="border: 1px solid white;background-color: black;color: white; flex: 1;">
+                        <select name="" id="" style="float: right;">
+                          <option value="This month" selected>This month</option>
+                          <option value="Last month" >Last month</option>
+                          <option value="This Quarter " >This Quarter</option>
+                          <option value="This Year" >This Year</option>
+                        </select>
+                        <div class="grid-item" style="background-color: black; color: white; font-size: 15px;">
+                            <h4>
+                                <span class="menu-icon">
+                                    <i class="mdi mdi-basket"></i>
+                                </span>&nbsp;Expenses
+                            </h4><br>
+                            <h6>$ 7,510.00</h6>
+                            <svg width="100%" height="200" viewBox="0 0 1000 200" preserveAspectRatio="xMinYMin meet" style="background-color: black;">
+                                <path d="M0 100 C100 150, 150 80, 300 150 S450 80, 500 150 S650 80, 700 100 S800 150, 1000 100" fill="transparent" stroke="green" stroke-width="5" />
+                            </svg>
+                            <p>Report: From 01 August to 31 August</p>
+                        </div>
+                    </fieldset>
+                    
                     </div><br></div>
                     
                     <div class="row" style="width: 95%;">
                       
                                           <div class="grid-container" style="background-color:black;color:white;display: flex;"><fieldset style="border:1px solid white;background-color:black;color:white;width: 33%;flex: 1;">
-                                              <div class="grid-item" style="background-color:black;color:white;font-size:15px;"><h4>&nbsp;&nbsp;Sale</h4><br>
+                                              <div class="grid-item" style="background-color:black;color:white;font-size:15px;"><h4><span style="color: green;">&#9660;</span> You'll recieve</h4><br>
                                   
-                                                <svg width="33%" height="200" viewBox="0 0 466 20" preserveAspectRatio="xMinYMin meet"
-                                                 style="background-color:black;color:rgb(237, 231, 231);" >
-                                                 <g class="bar-container" transform="translate(0,4)">
-                                                    <rect class="ph-rect" width="466" height="10" fill="#F4F4F4"></rect>
-                                                    <g class="rects-container" transform="translate(0, 0)"><rect height="10" width="391.2038162045045" class="cursor-pointer" x="0" style="fill:grey;"></rect>
-                                                      <rect height="10" width="74.7961837954955" class="cursor-pointer" x="391.20379638671875" style="fill:yellow"></rect>
-                                                    </g></g></svg>
+                                                <table>
+                                                  <tr>
+                                                      <td>Varun</td>
+                                                      <td>$ 14,750.00</td>
+                                                  </tr>
+                                                  <tr>
+                                                      <td>Parvathy</td>
+                                                      <td>$ 9,600.00</td>
+                                                  </tr>
+                                                  <tr>
+                                                      <td>Soumya</td>
+                                                      <td>$ 6,443.00</td>
+                                                  </tr>
+                                              </table>
                                                 
                                                   
                                               </div>
                                             </fieldset>
                                             <fieldset style="border:1px solid white;background-color:black;color:white;width: 33%;flex: 1;">
-                                              <div class="grid-item" style="background-color:black;color:white;font-size:15px;"><h4>&nbsp;&nbsp;Sale</h4><br>
+                                              <div class="grid-item" style="background-color:black;color:white;font-size:15px;"><h4><span style="color: red;">&#9650;</span>You'll pay</h4><br>
                                   
-                                                <svg width="33%" height="200" viewBox="0 0 466 20" preserveAspectRatio="xMinYMin meet"
-                                                 style="background-color:black;color:rgb(237, 231, 231);" >
-                                                 <g class="bar-container" transform="translate(0,4)">
-                                                    <rect class="ph-rect" width="466" height="10" fill="#F4F4F4"></rect>
-                                                    <g class="rects-container" transform="translate(0, 0)"><rect height="10" width="391.2038162045045" class="cursor-pointer" x="0" style="fill:grey;"></rect>
-                                                      <rect height="10" width="74.7961837954955" class="cursor-pointer" x="391.20379638671875" style="fill:yellow"></rect>
-                                                    </g></g></svg>
+                                                <table>
+                                                  <tr>
+                                                      <td>Nayana</td>
+                                                      <td>$ 14,750.00</td>
+                                                  </tr>
+                                                  <tr>
+                                                      <td>Nithya</td>
+                                                      <td>$ 9,600.00</td>
+                                                  </tr>
+                                                  <tr>
+                                                      <td>Abdu</td>
+                                                      <td>$ 6,443.00</td>
+                                                  </tr>
+                                              </table>
+                                                    </svg>
                                                 
                                                   
                                               </div>
                                             </fieldset>
                                             <fieldset style="border:1px solid white;background-color:black;color:white;width: 33%;flex: 1;">
-                                              <div class="grid-item" style="background-color:black;color:white;font-size:15px;"><h4>&nbsp;&nbsp;Sale</h4><br>
-                                  
-                                                <svg width="33%" height="200" viewBox="0 0 466 20" preserveAspectRatio="xMinYMin meet"
-                                                 style="background-color:black;color:rgb(237, 231, 231);" >
-                                                 <g class="bar-container" transform="translate(0,4)">
-                                                    <rect class="ph-rect" width="466" height="10" fill="#F4F4F4"></rect>
-                                                    <g class="rects-container" transform="translate(0, 0)"><rect height="10" width="391.2038162045045" class="cursor-pointer" x="0" style="fill:grey;"></rect>
-                                                      <rect height="10" width="74.7961837954955" class="cursor-pointer" x="391.20379638671875" style="fill:yellow"></rect>
-                                                    </g></g></svg>
+                                              <select name="" id="" style="float: right;">
+                                                <option value="This month" selected>This month</option>
+                                                <option value="Last month" >Last month</option>
+                                                <option value="This Quarter " >This Quarter</option>
+                                                <option value="This Year" >This Year</option>
+                                              </select>
+                                                <div class="grid-item" style="background-color:black;color:white;font-size:15px;"><h4><span class="menu-icon">
+                                                  <i class="mdi mdi-basket"></i>
+                                                </span>&nbsp;Purchase</h4><br>
+                                                <table>
+                                                  <tr>
+                                                      <td>Bottle</td>
+                                                      <td>$ 14,750.00</td>
+                                                  </tr><br>
+                                                  <tr>
+                                                      <td>DryFruit</td>
+                                                      <td>$ 9,600.00</td>
+                                                  </tr>
+                                            
+                                              </table>
+                                               
                                                 
                                                   
                                               </div>
@@ -134,7 +239,62 @@
         </div>
     
     </div>
+    </div>
+    
+<!-- Right sidebar -->
+<div class="sidebar">
+  
 
+  <!-- Add 5 fieldsets -->
+  <fieldset style="border: 1px solid white; background-color: black;">
+    <legend>Privacy</legend>
+
+    <!-- Add a small slider switch to the right of Privacy -->
+    <label class="small-switch">
+        <input type="checkbox">
+        <span class="slider round"></span>
+    </label>
+</fieldset><br>
+<h4>Stock Inventory</h4><br>
+  <fieldset style="border: 1px solid white;background-color:black;">
+    <legend>Stock Value</legend>
+    <p>$ 3,96,900.00</p>
+  </fieldset><br>
+
+  <fieldset style="border: 1px solid white;background-color:black;">
+    <legend>Low Stocks</legend>
+    <p>None of your stocks are displayed here</p>
+  </fieldset><br>
+  <h4>Cash & Bank</h4><br>
+  <fieldset style="border: 1px solid white;background-color:black;">
+    <legend>Cash in hand</legend>
+    <p>$ 5,15,512.00</p>
+  </fieldset><br>
+
+  <fieldset style="border: 1px solid white; background-color: black;">
+    <legend>Bank Accounts</legend>
+    <p>$ 1,67,370.00</p>
+    
+    <table>
+        <tr>
+            <td>Axis</td>
+            <td>1,14,750.00</td>
+        </tr>
+        <tr>
+            <td>Canara Bank</td>
+            <td>$ 9,600.00</td>
+        </tr>
+        <tr>
+            <td>ICICI</td>
+            <td>$ 6,443.00</td>
+        </tr>
+    </table>
+</fieldset>
+
+
+  
+</div>
+</div>
 </section>
 
 
