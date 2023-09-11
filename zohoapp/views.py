@@ -7289,7 +7289,13 @@ def ewayoverview(request,id):
     eway=EWayBill.objects.filter(user=request.user)
     ewayi=EWayBill.objects.filter(id=id)
     ewayb = EWayBillItem.objects.filter(eway_bill_id=id)  # Fetch items related to the EWayBill id
-    return render(request, 'ewayoverview.html',{'eway':eway,"ewayi":ewayi,'ewayb':ewayb})
+    projc = get_object_or_404(EWayBill, id=id)
+    if request.method == 'POST':
+        comment_text = request.POST.get('comment')
+        if comment_text:
+            projc.comment = comment_text  # Set the comment field of the specific project object
+            projc.save()  # Save the project object with the updated comment
+    return render(request, 'ewayoverview.html',{'eway':eway,"ewayi":ewayi,'ewayb':ewayb,'projc':projc})
 def delete_ewaybills(request, id):
 
     
@@ -7318,7 +7324,7 @@ def ewayedit(request,id):
      return render(request,'ewayedit.html',{'data':data,'payments':payments,'trans':trans,'units':units,'sales':sales,'purchase':purchase,'sales_type':sales_type,'purchase_type':purchase_type,'item':item,'eway':eway,'ewayb':ewayb,'ewayi':ewayi})
 def ewaybill_comment(request):
 
-    
+    company = company_details.objects.get(user = request.user)
 
     if request.method=='POST':
         id =request.POST.get('id')
@@ -7390,3 +7396,16 @@ def ewayeditdb(request, id):
             return redirect('ewayoverview' ,id=id)
 
     return render(request, 'ewayedit.html', {'eway': eway})
+def ewaycommentdb(request, id):
+    projc = get_object_or_404(EWayBill, id=id)
+
+    if request.method == 'POST':
+        comment_text = request.POST.get('comment')
+        if comment_text:
+            if projc.comment:
+                projc.comment += "\n" + comment_text  # Add new comment to existing comments
+            else:
+                projc.comment = comment_text  # If no comments exist, set it as the first comment
+            projc.save()
+
+    return redirect('ewayoverview', id=id)

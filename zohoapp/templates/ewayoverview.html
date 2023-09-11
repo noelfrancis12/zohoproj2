@@ -416,8 +416,8 @@
 
                 <div class="d-flex" style="float: right; margin-right: 25px;">
                     <div class="m-0">
-                        <a href="" class=" far fa-comment-alt btns px-2 py-2" title="COMMENTS"
-                            data-toggle="modal" data-target="#cmnts"> </a>
+                        <a href="#" class=" far fa-comment-alt btns px-2 py-2" title="COMMENTS"
+                            data-target="#cmnts" onclick="openModal()"> </a>
                     </div>
 
                     <div class="mx-4">{% for v in ewayi %}
@@ -580,7 +580,7 @@
                             <p class="py-0 px-5" style="color: black;">{{recur_bill.note}}</p> -->
                         </div>
                         <div class="col-4">
-                            <table class="table border-0 table-hover">
+                            <table class="table border-0 ">
                                 
                                 <tr>
                                     <td style="font-weight:bold">Sub Total :</td>
@@ -838,7 +838,107 @@
             </div>
         </div>
     </div>
+<!-- Modal -->
+<div id="commentModal" class="modal" style="width: 750px; margin-left: 400px;margin-top: 200px; justify-content: center; overflow: hidden;">
+    <!-- Modal content -->
+    <div class="modal-content bg-dark" style="background: rgb(32, 35, 37);border-radius: 20px;">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-header " style="background: rgb(32, 35, 37);">
+            <h5 class="m-3 text-uppercase text-light">Enter Comment</h5></div>
+        <form method="post" action="{% url 'ewaycommentdb' projc.id %}">
+            {% csrf_token %}
+            <textarea id="commentTextArea" name="comment" rows="8" placeholder="Enter your comment..." class="form-control bg-dark" style="height: 200px;width: 100%;"></textarea>
+            <!-- Hidden textarea to store previous comments -->
+<textarea id="hiddenComments" style="display: none;">{{ projc.comment }}</textarea>
 
+            <button type="submit" class="btn btn-warning">Save</button>
+            <button type="button" class="btn btn-warning mt-1" onclick="viewComment()">View</button>
+            <button type="button" class="btn btn-warning mt-1" onclick="clearTextArea()">Clear</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // ... Your existing JavaScript code ...
+
+    function viewComment() {
+        var commentTextArea = document.getElementById("commentTextArea");
+        var hiddenComments = document.getElementById("hiddenComments");
+
+        // Set the textarea value with the value fetched from the database
+        commentTextArea.value = hiddenComments.value;
+
+        var modal = document.getElementById("commentModal");
+        modal.style.display = "block";
+    }
+
+    // ... Your existing JavaScript code ...
+</script>
+    
+
+
+<script>
+    function saveComment() {
+        var comment = document.getElementById("commentTextArea").value;
+        var projId = '{{ ewayi.id }}'; // Assuming 'proj' variable is passed from Django view
+        var csrfToken = '{{ csrf_token }}'; // Assuming CSRF token is passed from Django template
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/ewaycommentdb/' + projId + '/');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('X-CSRFToken', csrfToken);
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log('Comment saved:', comment);
+                closeModal();
+            } else {
+                console.error('Failed to save comment:', xhr.statusText);
+            }
+        };
+
+        xhr.send('comment=' + encodeURIComponent(comment));
+    }
+</script>
+
+
+<script>
+ // Create an array to store comments
+var comments = [];
+
+function openModal() {
+    var modal = document.getElementById("commentModal");
+    modal.style.display = "block";
+}
+
+function closeModal() {
+    var modal = document.getElementById("commentModal");
+    modal.style.display = "none";
+}
+
+function saveComment() {
+    var comment = document.getElementById("commentTextArea").value;
+    comments.push(comment); // Save the comment to the array
+    console.log("Comment saved:", comment);
+    closeModal();
+}
+
+
+
+function clearTextArea() {
+    var commentTextArea = document.getElementById("commentTextArea");
+    commentTextArea.value = ""; // Clear the text in the textarea
+}
+
+// Close the modal if the user clicks outside of it
+window.onclick = function (event) {
+    var modal = document.getElementById("commentModal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+</script>
     <!-- attach file modal -->
 
     <div class="modal fade" id="files" style="width: 750px; margin-left: 350px;">

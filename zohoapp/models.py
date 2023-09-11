@@ -767,7 +767,7 @@ class EWayBill(models.Model):
     adj = models.DecimalField(max_digits=10, decimal_places=2,null=True)
     grand_total = models.DecimalField(max_digits=10, decimal_places=2,null=True)
     note = models.TextField(max_length=255,null=True)
-    comments = models.CharField(max_length=255,null=True,blank=True)
+    comment = models.CharField(max_length=255,null=True,blank=True)
 class EWayBillItem(models.Model):
     eway_bill = models.ForeignKey(EWayBill, on_delete=models.CASCADE)
     item = models.CharField(max_length=100,null=True)
