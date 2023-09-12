@@ -7010,7 +7010,8 @@ def delete_payrollcomment(request,cid):
 def ewaylistout(request):
      proj=EWayBill.objects.filter(user=request.user)
      custom=customer.objects.all()
-     return render(request,'ewaylistout.html',{'proj':proj,'custom':custom})
+     company=company_details.objects.get(user=request.user)
+     return render(request,'ewaylistout.html',{'proj':proj,'custom':custom,'company':company})
 def ewaycreate(request):
      user_id=request.user.id
      udata=User.objects.get(id=user_id)
@@ -7023,7 +7024,8 @@ def ewaycreate(request):
      sales_type = set(Sales.objects.values_list('Account_type', flat=True))
      purchase_type = set(Purchase.objects.values_list('Account_type', flat=True))
      item = AddItem.objects.filter(user = request.user)
-     return render(request,'ewaycreate.html',{'data':data,'payments':payments,'trans':trans,'units':units,'sales':sales,'purchase':purchase,'sales_type':sales_type,'purchase_type':purchase_type,'item':item})
+     company=company_details.objects.get(user=request.user)
+     return render(request,'ewaycreate.html',{'data':data,'payments':payments,'trans':trans,'units':units,'sales':sales,'purchase':purchase,'sales_type':sales_type,'purchase_type':purchase_type,'item':item,'company':company})
 def ewayb_customer(request):
     
     company = company_details.objects.get(user = request.user)
@@ -7288,6 +7290,7 @@ def create_ewaybillz(request):
 def ewayoverview(request,id):
     eway=EWayBill.objects.filter(user=request.user)
     ewayi=EWayBill.objects.filter(id=id)
+    company=company_details.objects.get(user=request.user)
     ewayb = EWayBillItem.objects.filter(eway_bill_id=id)  # Fetch items related to the EWayBill id
     projc = get_object_or_404(EWayBill, id=id)
     if request.method == 'POST':
@@ -7295,7 +7298,7 @@ def ewayoverview(request,id):
         if comment_text:
             projc.comment = comment_text  # Set the comment field of the specific project object
             projc.save()  # Save the project object with the updated comment
-    return render(request, 'ewayoverview.html',{'eway':eway,"ewayi":ewayi,'ewayb':ewayb,'projc':projc})
+    return render(request, 'ewayoverview.html',{'eway':eway,"ewayi":ewayi,'ewayb':ewayb,'projc':projc,'company':company})
 def delete_ewaybills(request, id):
 
     
@@ -7321,7 +7324,8 @@ def ewayedit(request,id):
      eway=EWayBill.objects.get(id=id)
      ewayi=EWayBill.objects.filter(id=id)
      ewayb=EWayBillItem.objects.filter(eway_bill_id=id)
-     return render(request,'ewayedit.html',{'data':data,'payments':payments,'trans':trans,'units':units,'sales':sales,'purchase':purchase,'sales_type':sales_type,'purchase_type':purchase_type,'item':item,'eway':eway,'ewayb':ewayb,'ewayi':ewayi})
+     company=company_details.objects.get(user=request.user)
+     return render(request,'ewayedit.html',{'data':data,'payments':payments,'trans':trans,'units':units,'sales':sales,'purchase':purchase,'sales_type':sales_type,'purchase_type':purchase_type,'item':item,'eway':eway,'ewayb':ewayb,'ewayi':ewayi,'company':company})
 def ewaybill_comment(request):
 
     company = company_details.objects.get(user = request.user)
@@ -7409,3 +7413,7 @@ def ewaycommentdb(request, id):
             projc.save()
 
     return redirect('ewayoverview', id=id)
+def get_transportation_options(request):
+    transportation_options = Transportation.objects.all().values_list('method', flat=True)
+    options_list = list(transportation_options)
+    return JsonResponse({'options': options_list})

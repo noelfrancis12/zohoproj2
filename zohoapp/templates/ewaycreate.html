@@ -2356,37 +2356,35 @@
                 },
                 
                 success: function(response) {
-                  document.getElementById("modalCustomer").reset();
-                  
-          
-                  reloadcustomer();
+    document.getElementById("modalCustomer").reset();
+    reloadcustomer(); // Call the reloadcustomer function to update the dropdown
+
+
                   
                 },
             });        
           });
           
           function reloadcustomer() {
-          
-            $.ajax({
-              url: "{% url 'customer_dropdown' %}",
-              type: "GET",
-              dataType: "json",
-              data: $(this).serialize(),
-              csrfmiddlewaretoken: '{{ csrf_token }}',
-          
-              success: function(data) {
-                var dropdow = $('#custom');
-                dropdow.empty();
-                $.each(data, function(key, value) {
-                    dropdow.append($('<option></option>').attr('value', key).text(value).val(value));
-                });
-              },
-              error: function(xhr, status, error) {
-              console.error(xhr.responseText);
-              }
+    $.ajax({
+        url: "{% url 'customer_dropdown' %}",
+        type: "GET",
+        dataType: "json",
+        data: {}, // You can pass additional data if needed
+        success: function(data) {
+            var dropdown = $('#customer');
+            dropdown.empty();
+            $.each(data, function(key, value) {
+                dropdown.append($('<option></option>').attr('value', key).text(value[1]).val(value[0] + ' ' + value[1]));
             });
-          }
-          
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+        }
+    });
+}
+
+
           
             //---------modal vendor-----
           
@@ -3742,42 +3740,68 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // Add an event listener to the "+" button
-    document.getElementById("create-trans").addEventListener("click", function() {
-        // Show the modal when the "+" button is clicked
-        $('#transportModal').modal('show');
-    });
-    
-    // Add an event listener to the "Close" button inside the modal
-    document.querySelector("#transportModal .modal-footer button[data-dismiss='modal']").addEventListener("click", function() {
-        // Close the modal when the "Close" button is clicked
-        $('#transportModal').modal('hide');
-    });
+   // Update the dropdown list with transportation options
+function updateTransportationOptions() {
+    $.ajax({
+        type: 'GET',
+        url: '/get-transportation-options/',  // Use the correct URL
+        success: function(response) {
+            // Clear existing options in the dropdown
+            $('#transportation').empty();
 
-    // Add an event listener to the form submission
-    $('#transportForm').submit(function(event) {
-        event.preventDefault(); // Prevent default form submission
-        
-        var transportationMethod = $('#transportInput').val();
-        if (transportationMethod.trim() !== '') {
-            $.ajax({
-                type: 'POST',
-                url: '/add-transportation/',  // URL from your Django URL configuration
-                data: {
-                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                    method: transportationMethod
-                },
-                success: function(response) {
-                    console.log(response.message);
-                    $('#transportModal').modal('hide');
-                    // Refresh view or update UI as needed
-                },
-                error: function(error) {
-                    console.error('Error adding transportation:', error);
-                }
+            // Add the hidden and selected placeholder option
+            $('#transportation').append('<option value="" hidden selected></option>');
+
+            // Add the default options "Bus," "Car," and "Train"
+            $('#transportation').append('<option value="Bus">Bus</option>');
+            $('#transportation').append('<option value="Car">Car</option>');
+            $('#transportation').append('<option value="Train">Train</option>');
+
+            // Add the fetched transportation options to the dropdown
+            response.options.forEach(function(option) {
+                $('#transportation').append('<option value="' + option + '">' + option + '</option>');
             });
+        },
+        error: function(error) {
+            console.error('Error fetching transportation options:', error);
         }
     });
+}
+
+// Call the function to populate the dropdown initially
+updateTransportationOptions();
+
+// Add an event listener to the "Create Transportation" button
+$('#create-trans').on('click', function() {
+    $('#transportModal').modal('show');
+});
+
+// Add an event listener to the form submission
+$('#transportForm').submit(function(event) {
+    event.preventDefault(); // Prevent default form submission
+    
+    var transportationMethod = $('#transportInput').val();
+    if (transportationMethod.trim() !== '') {
+        $.ajax({
+            type: 'POST',
+            url: '/add-transportation/',  // URL from your Django URL configuration
+            data: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                method: transportationMethod
+            },
+            success: function(response) {
+                console.log(response.message);
+                $('#transportModal').modal('hide');
+                // Refresh view or update UI as needed
+                updateTransportationOptions(); // Call the function to update the dropdown
+            },
+            error: function(error) {
+                console.error('Error adding transportation:', error);
+            }
+        });
+    }
+});
+
 </script>
 <!--modal-->
      
@@ -4377,106 +4401,7 @@
    modal1.style.display = "none";
   }
 </script>
-      <!--endmodal-->
-      <script>
-        $(document).ready(function() {
-         $("#cfname, #clname").change(function() {
-           $("#cdisplayname").text($("#ctitle").val() +" " + $("#cfname").val() + " " + $("#clname").val());
-         });
-       });
      
-       $(document).on("click","#customerSave",function(){
-         //$('#modalCustomer input:required').each(function() {
-        // if ($(this).val() === '')
-          // alert('error please fill all fields!');
-        // });
-     
-     if ($('input[name="radioCust"]:checked').val() == 'Business'){
-     
-       custType = $('#business').val();
-     }
-     else{
-       custType = $('#individual').val();
-     }
-       
-     if ($('input[name="radioCust1"]:checked').val() == 'Taxable'){
-       cust_tax = $('#custtax1').val();
-     }
-     else{
-         cust_tax = $('#custtax2').val();
-     }
-     $.ajax({
-       
-       type : 'POST',
-       url:"{% url 'ewayb_customer' %}",
-     
-       data:{
-           customer_type : custType,
-           display_name : $('#cdisplayname').text(),
-           company_name : $('#ccompany').val(),
-           email : $("#cemail").val(),
-           work_mobile :$("#cw_mobile").val(),
-           pers_mobile :$("#cp_mobile").val(),
-           facebook :$("#facebook").val(),
-           twitter :$("#twitter").val(),
-           website :$("#website").val(),
-           skype :$("#cskype").val(),
-           desg :$("#c_desg").val(),
-           dpt :$("#c_dpt").val(),
-           gsttype :$("#c_gsttype").val(),
-           placeofsupply :$("#placesupply").val(),
-           tax_preference :cust_tax,
-           currency : $("#c_curn").val(),
-           openingbalance : $("#c_open").val(),
-           paymentterms : $("#c_terms").val(),
-           street1 : $("#cstreet1").val(),
-           street2 : $("#cstreet2").val(),
-           city : $("#ccity").val(),
-           state : $("#cstate").val(),
-           pincode : $("#cpincode").val(),
-           fax : $("#cfax").val(),
-           phone : $("#cphone").val(),
-           country : $("ccountry").val(),
-           csrfmiddlewaretoken: '{{ csrf_token }}'
-           
-         },
-       
-         success: function(response) {
-           document.getElementById("modalCustomer").reset();
-           reloadCustomer();
-           var createUserBtn = document.getElementById("create-cus");
-          var modal1 = document.getElementById("myModa");
-          modal1.style.display = "none";
-          
-         },
-         
-     });  
-     event.preventDefault();
-           
-     });
-     
-     function reloadCustomer() {
-     
-     $.ajax({
-       url: "{% url 'customer_dropdown_ewayb' %}",
-       type: "GET",
-       dataType: "json",
-       data: $(this).serialize(),
-       csrfmiddlewaretoken: '{{ csrf_token }}',
-     
-       success: function(data) {
-         var dropdown = $('#customer');
-         dropdown.empty();
-         $.each(data, function(key, value) {
-             dropdown.append($('<option></option>').attr('value', key).text(value[1]).val(value[0] + ' ' + value[1]));
-         });
-       },
-       error: function(xhr, status, error) {
-       console.error(xhr.responseText);
-       }
-     });
-     }
-     </script>
      <div id="myModal2" class="modal3" style="z-index: 9999;">
       <div class="modal3-content bg-dark">
         <h2>New Payment Terms</h2>
@@ -4770,7 +4695,7 @@ function reloadPayment() {
     csrfmiddlewaretoken: '{{ csrf_token }}',
 
     success: function(data) {
-      var dropdown = $('#terms');
+      var dropdown = $('#c_terms');
       dropdown.empty();
       dropdown.append(`<option selected value="15">NET 15</option>
                           <option value="30">NET 30</option>
