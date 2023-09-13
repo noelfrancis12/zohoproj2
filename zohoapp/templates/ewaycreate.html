@@ -261,7 +261,7 @@
         </div>
       </div>
 
-      <div class="row mt-2 " id="cemail_row">
+      <div class="row mt-2 d-none" id="cemail_row">
         <div class="col-md-3">
           <label for="cemail_inp">Customer Email</label>
         </div>
@@ -270,7 +270,7 @@
         </div>
       </div>
 
-      <div class="row mt-2 " id="cgst_trt_row">
+      <div class="row mt-2 d-none" id="cgst_trt_row">
         <div class="col-md-3">
           <label for="gst_trt_inp">GST Treatment</label>
         </div>
@@ -279,14 +279,14 @@
         </div>
       </div>
 
-      <!--<div class="row mt-2 mb-2 d-none" id="cgstin_row">
+      <div class="row mt-2 mb-2 d-none" id="cgstin_row">
         <div class="col-md-3">
           <label for="gstin_inp">GST Number</label>
         </div>
         <div class="col-md-6">
           <input type="text" class="form-control text-dark bg-light"  id="cgstin_inp" name="cgstin_inp" >
         </div>
-      </div>-->
+      </div>
 
 
                 <div class="form-group row mt-4">
@@ -303,7 +303,13 @@
                         <input type="date" name="date" id="dateInput" class="form-control bg-light text-dark" style="float: left;">
                     </div>
                 </div>
-                
+                <script>
+                  // JavaScript to set the date input to today's date and restrict selection of other dates
+                  const today = new Date().toISOString().split('T')[0];
+                  document.getElementById('dateInput').value = today; // Set today's date as the default value
+                  document.getElementById('dateInput').setAttribute('min', today); // Prevent selecting dates before today
+                  document.getElementById('dateInput').setAttribute('max', today); // Prevent selecting dates after today
+              </script>
                 <div class="form-group row mt-4">
                     <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Transaction Type*</label></div>
                     <div class="col-sm-12 col-md-6 col-lg-6">
@@ -398,14 +404,12 @@
                     
                 </div>
                 <div class="form-group row mt-4">
-                    <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Vehicle Number</label></div>
-                    <div class="col-sm-12 col-md-6 col-lg-6">
-                        <input  type="text" class="form-control bg-light text-dark" name="vno" >     
-                        
-     
-                    </div>
-                    
-                </div>
+                  <div class="col-sm-12 col-md-3 col-lg-3 col-form-label"><label>Vehicle Number</label></div>
+                  <div class="col-sm-12 col-md-6 col-lg-6">
+                      <input type="text" class="form-control bg-light text-dark" name="vno" placeholder="KL XX AA 1234">
+                  </div>
+              </div>
+              
 
 
                 
@@ -1253,17 +1257,17 @@
                             </div>       
                           </div>
           
-                          <!-- <div class="row gstrow d-none">
+                           <div class="row gstrow d-none">
                             <div class="col-md-3 mt-2">
                               <label id="glbl" style="color:rgb(190, 88, 88);">GSTIN/UIN *</label>
                             </div>
                             <div class="col-md-6 mt-2">
-                              <input type="text" class="form-control" id="v_gstin" name="v_gstin" placeholder="29APPCK7465F1Z1">
+                              <input type="text" class="form-control bg-light text-dark" id="c_gstin" name="c_gstin" placeholder="29APPCK7465F1Z1">
                               <label id="gst_label"></label>
                             </div>       
                           </div>
           
-                          <div class="row">
+                          <!--<div class="row">
                             <div class="col-md-3 mt-2">
                               <label for="v_pan">PAN Number</label>
                             </div>
@@ -2311,7 +2315,7 @@
             $.ajax({
               
               type : 'POST',
-              url:"{% url 'purchase_customer' %}",
+              url:"{% url 'purchase_customer_eway' %}",
           
               data:{
                   tax:inte,

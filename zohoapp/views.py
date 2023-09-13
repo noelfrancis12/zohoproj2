@@ -7417,3 +7417,66 @@ def get_transportation_options(request):
     transportation_options = Transportation.objects.all().values_list('method', flat=True)
     options_list = list(transportation_options)
     return JsonResponse({'options': options_list})
+def purchase_customer_eway(request):
+    if request.user.is_authenticated:
+        if request.method=='POST':
+            tax=request.POST.get('tax')
+            type=request.POST.get('title')
+            first=request.POST['firstname']
+            last=request.POST['lastname']
+            txtFullName= request.POST['display_name']
+            
+            itemtype=request.POST.get('itemtype')
+            cpname=request.POST['company_name']
+            
+            email=request.POST.get('email')
+            wphone=request.POST.get('work_mobile')
+            mobile=request.POST.get('pers_mobile')
+            skname=request.POST.get('skype')
+            desg=request.POST.get('desg')      
+            dept=request.POST.get('dpt')
+            wbsite=request.POST.get('website')
+
+            gstt=request.POST.get('gsttype')
+            gstn=request.POST.get('gstin')
+            posply=request.POST.get('placesupply')
+            crncy=request.POST.get('currency')
+            obal=request.POST.get('openingbalance')
+
+           
+            pterms=request.POST.get('paymentterms')
+
+            plst=request.POST.get('plst')
+            plang=request.POST.get('plang')
+            fbk=request.POST.get('facebook')
+            twtr=request.POST.get('twitter')
+        
+            ctry=request.POST.get('country')
+            
+            street=request.POST.get('street')
+            shipstate=request.POST.get('shipstate')
+            shipcity=request.POST.get('shipcity')
+            bzip=request.POST.get('shippincode')
+            shipfax=request.POST.get('shipfax')
+
+            sal=request.POST.get('title')
+            addres=street +','+ shipcity+',' + shipstate+',' + bzip
+            adress2=addres
+            u = User.objects.get(id = request.user.id)
+
+            print(tax)
+            ctmr=customer(customerName=txtFullName,customerType=itemtype,
+                        companyName=cpname,customerEmail=email,customerWorkPhone=wphone,
+                         customerMobile=mobile,skype=skname,designation=desg,department=dept,
+                           website=wbsite,GSTTreatment=gstt,GSTIN=gstn,placeofsupply=posply, Taxpreference=tax,
+                             currency=crncy,OpeningBalance=obal,PaymentTerms=pterms,
+                                PriceList=plst,PortalLanguage=plang,Facebook=fbk,Twitter=twtr
+                                 ,country=ctry,Address1=addres,Address2=adress2,
+                                  city=shipcity,state=shipstate,zipcode=bzip,phone1=wphone,
+                                   fax=shipfax,CPsalutation=sal,Firstname=first,
+                                    Lastname=last,CPemail=email,CPphone=mobile,
+                                    CPmobile= wphone,CPskype=skname,CPdesignation=desg,
+                                     CPdepartment=dept,user=u )
+            ctmr.save()
+
+        return HttpResponse({"message": "success"})

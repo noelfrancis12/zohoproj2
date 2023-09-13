@@ -479,13 +479,13 @@
                 </div>
                 <div class="row extra-info pt-2 mt-3">
                     <div class="col-1 "></div>
-                    <div class="col-5 ">
-                        <h3 class="text-uppercase" style="color: black;"><b>{{company.company_name }}</b></h3>
-                        <p class="address mx-2 p-2"> {{company.address}}<br>
-                            {{company.city}} <br>
-                            {{company.state}}<br>
-                            {{company.pincode}}<br>
-                        </p>                    
+                    <div class="col-5 ">{% for v in ewayi %}
+                        <h3 class="text-uppercase" style="color: black;"><b>{{v.cust.customerName }}</b></h3>
+                        <p class="address mx-2 p-2"> {{v.cust.customerEmail }}<br>
+                            {{v.cust.GSTTreatment }} <br>
+                            {{v.invoiceno }}<br>
+                            {{v.vno }}<br>{% endfor %}
+                        </p>                 
                     </div>
                     <div class="col-1 "></div>
                     <div class="col-5">

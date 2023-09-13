@@ -104,7 +104,7 @@
                     <th>TRANSACTION#</th>
                     <th>CUSTOMER NAME</th>
                     <th>CUSTOMER E-MAIL</th>
-                    
+                    <th>CUSTOMER GSTIN</th>
                     <th>TOTAL</th>
                    
                   </tr>
@@ -118,7 +118,7 @@
                    
                     <td><a href="{% url 'ewayoverview' v.id %}"> {{v.cust.customerName}}</a> </td>
                     <td><a href="{% url 'ewayoverview' v.id %}">{{v.cust.customerEmail}}</a></td>
-                    
+                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.cgstin_inp}}</a></td>
                    
                     <td><a href="{% url 'ewayoverview' v.id %}">{{v.grand_total}}</a></td>
                   </tr>
