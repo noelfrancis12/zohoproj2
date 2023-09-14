@@ -250,7 +250,7 @@
           <select name="customerzz" id="customer" class="form-control text-dark bg-light" >
             <option value=""></option>
             {% for c in data %}
-            <option value="{{c.id}}" data-email="{{ c.customerEmail }}" data-gst-treatment="{{c.GSTTreatment}}" data-gst-number="{{c.GSTIN}}">{{ c.customerName }}</option>
+            <option value="{{c.id}}" data-email="{{ c.customerEmail }}" data-gst-treatment="{{c.GSTTreatment}}" data-GSTIN="{{c.GSTIN}}">{{ c.customerName }}</option>
             {% endfor %}
           </select>
           <a href="" data-toggle="modal" data-target="#newcustomer">+ Add New Customer</a>
@@ -4739,7 +4739,7 @@ function reloadPayment() {
     var selectedOption = this.options[this.selectedIndex];
     var email = selectedOption.dataset.email;
     var gstTreatment = selectedOption.dataset.gstTreatment;
-    var gstNumber = selectedOption.dataset.gstNumber;
+    var gstNumber = selectedOption.dataset.GSTIN;
 
     customerEmailInput.value = email;
     gstTreatmentInput.value = gstTreatment;

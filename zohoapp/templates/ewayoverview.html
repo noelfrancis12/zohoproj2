@@ -415,17 +415,17 @@
                 </div>
 
                 <div class="d-flex" style="float: right; margin-right: 25px;">
-                    <div class="m-0">
+                    
                         <a href="#" class=" far fa-comment-alt btns px-2 py-2" title="COMMENTS"
-                            data-target="#cmnts" onclick="openModal()"> </a>
-                    </div>
+                            data-target="#cmnts" onclick="openModal()"> </a>&nbsp;
+                    
 
-                    <div class="mx-4">{% for v in ewayi %}
+                    {% for v in ewayi %}
                         <a href="{% url 'ewayedit' v.id  %}" class=" fa fa-pencil btns px-2 py-2"
-                              data-toggle="tooltip" title="EDIT"> </a>
+                              data-toggle="tooltip" title="EDIT"> </a>&nbsp;
                         <a href="{% url 'delete_ewaybills' v.id  %}" class="delete fa fa-trash btns px-2 py-2"
                          data-toggle="tooltip" title="DELETE" onclick="return confirm('Do you want to Delete this Eway Bill?');"> </a>
-                    </div>{% endfor %}
+                    {% endfor %}
 
                     <div class="mx-1">
                    
@@ -515,8 +515,9 @@
 
                             <div class="col-1 "></div>
                             <div class="col-5">
-                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>{% for v in ewayi %}
-                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ v.customer}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
+                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Bill To,</p>
+                                {% for v in ewayi %}
+                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ v.cust.customerName}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
                                 <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">{{v.adda}}<br>
                                     {{v.addb}}<br>
                                     {{v.srcofsupply}}<br> 
@@ -531,12 +532,12 @@
                             </div> -->
 
                             <div class="col-5">
-                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Deliver To,</p>{% for v in ewayi %}
-                                <h6  class="mx-3 text-capitalize" style="color: black; ">{{ v.cust.customerName}} {{vendor.first_name}} {{ vendor.last_name}}</h6>
-                                <p class="address col-6 mx-4 p-2" style="margin-left: -14px;">{{v.adda}}<br>
-                                    {{v.addb}}<br>
-                                    {{v.srcofsupply}}<br> 
-                                </p>{% endfor %}
+                                <p style=" font-size: 18px; font-style: italic; font-weight: 700;">Deliver To,</p> <h6  style="color: black;">{{company.company_name }}</h6>
+                                <p class="address mx-2 p-2"> {{company.address}}<br>
+                                    {{company.city}} <br>
+                                    {{company.state}}<br>
+                                    {{company.pincode}}<br>
+                                </p>      
                             </div>
                         </div>
 
@@ -587,21 +588,24 @@
                                     <td style="font-weight:bold">{{i.sub_total}}</td>
                                 </tr>
                               
-                                <tr>
-                                    <td style="font-weight:bold">IGST :</td>
-                                    <td style="font-weight:bold">{{i.igst}}</td>
-                                </tr>
-                            
-                               
-                                <tr>
-                                    <td style="font-weight:bold">CGST :</td>
-                                    <td style="font-weight:bold">{{i.cgst}}</td>
-                                </tr>
-                              
-                                <tr>
-                                    <td style="font-weight:bold">SGST:</td>
-                                    <td style="font-weight:bold">{{i.sgst}}</td>
-                                </tr>
+                                {% if i.igst != 0 %}
+                        <tr>
+                            <td style="font-weight:bold">IGST :</td>
+                            <td style="font-weight:bold">{{ i.igst }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if i.cgst != 0 %}
+                        <tr>
+                            <td style="font-weight:bold">CGST :</td>
+                            <td style="font-weight:bold">{{ i.cgst }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if i.sgst != 0 %}
+                        <tr>
+                            <td style="font-weight:bold">SGST :</td>
+                            <td style="font-weight:bold">{{ i.sgst }}</td>
+                        </tr>
+                    {% endif %}
                                
                                 <tr>
                                     <td style="font-weight:bold">Shipping Charge:</td>
@@ -750,14 +754,39 @@
                                 </div>
                             </div><br><br><br>
                             <!-- SGST/IGST/CGST -->
-                            <div class="d-flex justify-content-between mb-3">
-                                <div class="col-md-6 mt-3">
-                                    <h6 style="color: #ccc;">SGST :</h6>
-                                </div>
-                                <div class="col-md-6 mt-3">
-                                    <input type="text" value="{{ v.sgst }} INR" class="amnt" style="font-size: 16px; color: azure;" readonly>
-                                </div>
-                            </div><br><br><br>
+                             <!-- IGST -->
+        {% if v.igst != 0 %}
+        <div class="d-flex justify-content-between mb-3">
+            <div class="col-md-6 mt-3">
+                <h6 style="color: #ccc;">IGST :</h6>
+            </div>
+            <div class="col-md-6 mt-3">
+                <input type="text" value="{{ v.igst }} INR" class="amnt" style="font-size: 16px; color: azure;" readonly>
+            </div>
+        </div><br><br><br>
+        {% endif %}
+        <!-- CGST -->
+        {% if v.cgst != 0 %}
+        <div class="d-flex justify-content-between mb-3">
+            <div class="col-md-6 mt-3">
+                <h6 style="color: #ccc;">CGST :</h6>
+            </div>
+            <div class="col-md-6 mt-3">
+                <input type="text" value="{{ v.cgst }} INR" class="amnt" style="font-size: 16px; color: azure;" readonly>
+            </div>
+        </div><br><br><br>
+        {% endif %}
+        <!-- SGST -->
+        {% if v.sgst != 0 %}
+        <div class="d-flex justify-content-between mb-3">
+            <div class="col-md-6 mt-3">
+                <h6 style="color: #ccc;">SGST :</h6>
+            </div>
+            <div class="col-md-6 mt-3">
+                <input type="text" value="{{ v.sgst }} INR" class="amnt" style="font-size: 16px; color: azure;" readonly>
+            </div>
+        </div><br><br><br>
+        {% endif %}
                             <!-- Shipping Charge -->
                             <div class="d-flex justify-content-between mb-3">
                                 <div class="col-md-6 mt-3">

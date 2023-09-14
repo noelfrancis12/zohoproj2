@@ -7016,6 +7016,8 @@ def ewaycreate(request):
      user_id=request.user.id
      udata=User.objects.get(id=user_id)
      data=customer.objects.all()
+     for i in data :
+         print(i.GSTIN)
      payments=payment_terms.objects.all()
      trans=Transportation.objects.all()
      units = Unit.objects.all()
