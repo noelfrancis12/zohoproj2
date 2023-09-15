@@ -7411,7 +7411,7 @@ def ewaycommentdb(request, id):
             if projc.comment:
                 projc.comment += "\n" + comment_text  # Add new comment to existing comments
             else:
-                projc.comment = comment_text  # If no comments exist, set it as the first comment
+                projc.comment = comment_text  # If no comments exist, set it as the first comments
             projc.save()
 
     return redirect('ewayoverview', id=id)
