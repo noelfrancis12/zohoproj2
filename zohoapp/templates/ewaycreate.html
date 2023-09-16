@@ -284,7 +284,7 @@
           <label for="gstin_inp">GST Number</label>
         </div>
         <div class="col-md-6">
-          <input type="text" class="form-control text-dark bg-light"  id="cgstin_inp" name="cgstin_inp" >
+          <input type="text" class="form-control text-dark bg-light"  id="ggist" name="cgstin_inp" >
         </div>
       </div>
 
@@ -4733,13 +4733,13 @@ function reloadPayment() {
   var customerSelect = document.getElementById('customer');
   var customerEmailInput = document.getElementById('cemail_inp');
   var gstTreatmentInput = document.getElementById('cgst_trt_inp');
-  var gstNumberInput = document.getElementById('cgstin_inp');
+  var gstNumberInput = document.getElementById('ggist');
 
   customerSelect.addEventListener('change', function() {
     var selectedOption = this.options[this.selectedIndex];
     var email = selectedOption.dataset.email;
     var gstTreatment = selectedOption.dataset.gstTreatment;
-    var gstNumber = selectedOption.dataset.GSTIN;
+    var gstNumber = selectedOption.dataset.gstin;
 
     customerEmailInput.value = email;
     gstTreatmentInput.value = gstTreatment;
