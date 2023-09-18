@@ -118,7 +118,7 @@
                    
                     <td><a href="{% url 'ewayoverview' v.id %}"> {{v.cust.customerName}}</a> </td>
                     <td><a href="{% url 'ewayoverview' v.id %}">{{v.cust.customerEmail}}</a></td>
-                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.cgstin_inp}}</a></td>
+                    <td><a href="{% url 'ewayoverview' v.id %}">{{v.cust.GSTIN}}</a></td>
                    
                     <td><a href="{% url 'ewayoverview' v.id %}">{{v.grand_total}}</a></td>
                   </tr>
